@@ -13,6 +13,9 @@
   justify-content: center;
   gap: 20px;
 }
+.footer-logo img {
+  width: 100px;
+}
 
 .footer-logo p {
   color: #321970;
@@ -62,4 +65,29 @@
   border-radius: 10px;
   height: 3px;
   background: #c7c7c7;
+}
+@media (max-width: 1280px) {
+  .footer {
+    gap: 20px;
+  }
+  .footer-logo {
+    gap: 10px;
+    align-items: end;
+  }
+  .footer-logo img {
+    width: 50px;
+  }
+  .footer-logo p {
+    font-size: 25px;
+  }
+  .footer-links {
+    gap: 10px;
+    font-size: 14px;
+  }
+  .footer-social-icon img {
+    width: 22px;
+  }
+  .footer-copyright {
+    font-size: 13px;
+  }
 }
