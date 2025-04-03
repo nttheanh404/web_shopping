@@ -9,7 +9,7 @@ const Footer = () => {
   return (
     <div className="footer">
       <div className="footer-logo">
-        <img src={footer_logo} alt="logo" style={{width:"25%"}} />
+        <img src={footer_logo} alt="logo" />
         <p>JYSTORE</p>
       </div>
       <ul className="footer-links">

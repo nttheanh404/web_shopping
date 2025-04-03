@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import "./cartItems.css";
 import { ShopContext } from "../../context/ShopContext";
 import remove_icon from "../assets/cart_cross_icon.png";
+import { Link } from "react-router-dom"
 
 const CartItems = () => {
   const { getTotalCartAmount, all_product, cartItems, removeFromCart } =
@@ -46,7 +47,7 @@ const CartItems = () => {
       })}
       <div className="cart-items-down">
         <div className="cart-items-total">
-          <h1>cart Totals</h1>
+          <h1>Cart Totals</h1>
           <div>
             <div className="cart-items-total-item">
               <p>Subtotal</p>
@@ -63,7 +64,9 @@ const CartItems = () => {
               <h3>${getTotalCartAmount()}</h3>
             </div>
           </div>
-          <button>PROCEED TO CHECKOUT</button>
+          <Link to="/checkout">
+            <button>PROCEED TO CHECKOUT</button>
+          </Link>
         </div>
         <div className="cart-items-promo-code">
           <p>If you have a promo code, Enter it here</p>
