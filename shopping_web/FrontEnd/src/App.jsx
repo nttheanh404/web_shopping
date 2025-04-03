@@ -6,13 +6,16 @@ import Shop from "./pages/Shop";
 import ShopCategory from "./pages/ShopCategory";
 import Product from "./pages/Product";
 import Cart from "./pages/Cart";
-import LoginSignup from "./pages/LoginSignup";
+// import LoginSignup from "./pages/LoginSignup";
 import Footer from "./components/Footer/footer.jsx";
 import men_banner from "./components/assets/banner_mens.png";
 import women_banner from "./components/assets/banner_women.png";
 import kid_banner from "./components/assets/banner_kids.png";
 import Checkout from "./components/Checkout/checkout.jsx";
 import ChangePassword from "./components/Password/password.jsx";
+import ForgotPassword from "./components/ForgotPassword/ForgotPassword.jsx";
+import Login from "./pages/Login.jsx";
+import Signup from "./pages/Signup.jsx";
 function App() {
   return (
     <div>
@@ -38,9 +41,13 @@ function App() {
           </Route>
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/login" element={<LoginSignup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/change-password" element={<ChangePassword />} />
+
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
+
         <Footer />
       </BrowserRouter>
     </div>

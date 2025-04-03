@@ -148,6 +148,21 @@ body {
   }
 }
 
+.login-forgot-password {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+  margin-top: 8px;
+  font-size: 14px;
+  color: black;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.login-forgot-password span {
+  color: #ff4141;
+}
+
 @media (max-width: 1024px) {
   .login-signup {
     flex-direction: column;
