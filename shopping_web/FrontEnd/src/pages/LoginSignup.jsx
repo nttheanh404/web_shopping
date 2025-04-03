@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./CSS/LoginSignup.css";
 import hero1_image from "../components/assets/hero1_image.png";
 
+
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 
 const LoginSignup = () => {
