@@ -16,6 +16,8 @@ import ChangePassword from "./components/Password/password.jsx";
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
+import NotFound from "./components/NotFound/notFound.jsx";
+import SuccessOrder from "./components/SuccessOrder/successOrder.jsx";
 function App() {
   return (
     <div>
@@ -46,6 +48,8 @@ function App() {
           <Route path="/change-password" element={<ChangePassword />} />
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/success-order" element={<SuccessOrder />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
         <Footer />
