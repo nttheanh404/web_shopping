@@ -13,6 +13,8 @@ const Admin = () => {
       <Routes>
         <Route path="/addproduct" element={<AddProduct />} />
         <Route path="/listproduct" element={<ListProduct />} />
+        <Route path="/updateproduct/:id" element={<AddProduct />} />
+        {/* <Route path="/revenue" element={<Revenue />} /> */}
         {/* <Route path="/ordermanagement" element={<OrderManagement />} /> */}
       </Routes>
     </div>

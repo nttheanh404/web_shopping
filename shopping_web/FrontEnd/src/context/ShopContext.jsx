@@ -41,7 +41,20 @@ const ShopContextProvider = (props) => {
       }
     }
     return totalItems;
-  }
+  };
+
+  // const loadCartFromStorage = () => {
+  //   const user = JSON.parse(localStorage.getItem("user"));
+  //   if (user && user._id) {
+  //     const storedCart = localStorage.getItem(`cartItems_${user._id}`);
+  //     const storedSelected = localStorage.getItem(`selectedItems_${user._id}`);
+  //     setCartItems(storedCart ? JSON.parse(storedCart) : {});
+  //     setSelectedItems(storedSelected ? JSON.parse(storedSelected) : []);
+  //   } else {
+  //     setCartItems({});
+  //     setSelectedItems([]);
+  //   }
+  // };
 
   const contextValue = {
     getTotalCartItems,
@@ -50,6 +63,7 @@ const ShopContextProvider = (props) => {
     cartItems,
     addToCart,
     removeFromCart,
+    // loadCartFromStorage,
   };
 
   return (

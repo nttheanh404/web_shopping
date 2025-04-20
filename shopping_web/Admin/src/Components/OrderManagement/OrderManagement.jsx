@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import "./OrderManagement.css";
 
 const OrderManagement = () => {
+  const authUrl = import.meta.env.VITE_BE_URL;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:8080/order");
+      const res = await fetch(`${authUrl}/order`);
       if (!res.ok) throw new Error("Lỗi khi fetch đơn hàng");
       const data = await res.json();
       setOrders(data);
@@ -50,7 +51,7 @@ const OrderManagement = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:8080/order/status/${orderId}`, {
+      const res = await fetch(`${authUrl}/order/status/${orderId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -1,12 +1,34 @@
 import React, { useState } from "react";
+import { login } from "../services/auth";
+import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import "./CSS/LoginSignup.css";
 import hero1_image from "../components/assets/hero1_image.png";
-import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async () => {
+    try {
+      const res = await login(form);
+      // Lưu token hoặc thông tin user vào localStorage nếu muốn
+      localStorage.setItem("accessToken", res.accessToken);
+      localStorage.setItem("user", JSON.stringify(res.user));
+      navigate("/"); // Chuyển về trang chủ hoặc dashboard
+      window.location.reload();
+    } catch (error) {
+      setErrorMsg(error || "Đăng nhập thất bại!");
+    }
+  };
 
   const getInputClassName = (inputName) => {
     return `input-field ${window.innerWidth >= 768 ? "md" : ""} ${
@@ -27,6 +49,8 @@ const Login = () => {
               type="email"
               placeholder="Email Address"
               name="email"
+              value={form.email}
+              onChange={handleChange}
               className={getInputClassName("email")}
               onFocus={() => setFocusedInput("email")}
               onBlur={() => setFocusedInput(null)}
@@ -40,6 +64,9 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
                 className={getInputClassName("password")}
                 onFocus={() => setFocusedInput("password")}
                 onBlur={() => setFocusedInput(null)}
@@ -52,17 +79,12 @@ const Login = () => {
               </div>
             </div>
           </div>
-          <p className="login-forgot-password">
-            Forgot your password?{" "}
-            <Link to="/forgot-password" style={{ textDecoration: "none" }}>
-              <span>Click here</span>
-            </Link>
-          </p>
+          {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
         </div>
-        <button>Log In</button>
+        <button onClick={handleLogin}>Log In</button>
         <p className="login-signup-login">
           Don't have an account?{" "}
-          <Link to="/signup" style={{ textDecoration: "none" }}>
+          <Link to="/signup">
             <span>Sign Up Here</span>
           </Link>
         </p>
