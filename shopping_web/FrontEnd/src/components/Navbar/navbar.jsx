@@ -1,19 +1,44 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import "./navbar.css";
 import logo from "../assets/logo.png";
 import cart_icon from "../assets/cart_icon.png";
 import { Link } from "react-router-dom";
 import { ShopContext } from "../../context/ShopContext";
 import nav_dropdown from "../assets/nav_dropdown.png";
+import { logout } from "../../services/auth";
+import { getStorageData, removeStorageData } from "../../helpers/stored";
+import { IoPersonCircleOutline } from "react-icons/io5";
 
 const Navbar = () => {
-  // const [menu, setMenu] = useState("shop");
   const { getTotalCartItems } = useContext(ShopContext);
   const menuRef = useRef();
+  const [user, setUser] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const userData = getStorageData("user", null);
+  useEffect(() => {
+    if (userData && userData.name) {
+      setUser(userData);
+      // loadCartFromStorage();
+    } else {
+      setUser(null);
+    }
+  }, []);
 
   const dropdown_toggle = (e) => {
     menuRef.current.classList.toggle("nav-menu-visible");
     e.target.classList.toggle("open");
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout(); // Gọi API logout
+      removeStorageData("user");
+      removeStorageData("accessToken");
+      setUser(null); // Cập nhật lại trạng thái người dùng
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
   };
 
   return (
@@ -38,10 +63,9 @@ const Navbar = () => {
         className="nav-dropdown"
         onClick={dropdown_toggle}
         src={nav_dropdown}
-        alt=""
+        alt="dropdown"
       />
       <ul ref={menuRef} className="nav-menu">
-        {/* <li onClick={() => setMenu("shop")}> */}
         <li>
           <Link
             style={{ textDecoration: "none", color: "currentColor" }}
@@ -49,9 +73,7 @@ const Navbar = () => {
           >
             Shop
           </Link>
-          {/* {menu === "shop" ? <hr /> : null} */}
         </li>
-        {/* <li onClick={() => setMenu("mens")}> */}
         <li>
           <Link
             style={{ textDecoration: "none", color: "currentColor" }}
@@ -59,9 +81,7 @@ const Navbar = () => {
           >
             Men
           </Link>
-          {/* {menu === "mens" ? <hr /> : null} */}
         </li>
-        {/* <li onClick={() => setMenu("womens")}> */}
         <li>
           <Link
             style={{ textDecoration: "none", color: "currentColor" }}
@@ -69,9 +89,7 @@ const Navbar = () => {
           >
             Women
           </Link>
-          {/* {menu === "womens" ? <hr /> : null} */}
         </li>
-        {/* <li onClick={() => setMenu("kids")}> */}
         <li>
           <Link
             style={{ textDecoration: "none", color: "currentColor" }}
@@ -79,17 +97,68 @@ const Navbar = () => {
           >
             Kids
           </Link>
-          {/* {menu === "kids" ? <hr /> : null} */}
         </li>
       </ul>
 
       <div className="nav-login-cart">
-        <Link
-          style={{ textDecoration: "none", color: "currentColor" }}
-          to="/login"
-        >
-          <button>Log in</button>
-        </Link>
+        {!user ? (
+          <>
+            <Link
+              style={{ textDecoration: "none", color: "currentColor" }}
+              to="/login"
+            >
+              <button className="login-button">Log in</button>
+            </Link>
+          </>
+        ) : (
+          <div className="dropdown-container">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="dropdown-button"
+            >
+              <IoPersonCircleOutline size={30} className="user-icon" />
+              <span className="user-name">{user.name} </span>
+              <span>▼</span>
+            </button>
+
+            {isOpen && (
+              <ul className="dropdown-menu">
+                <li className="dropdown-item">
+                  <Link
+                    style={{ textDecoration: "none", color: "currentColor" }}
+                    to="/profile"
+                  >
+                    Hồ sơ
+                  </Link>
+                </li>
+                <li className="dropdown-item">
+                  <Link
+                    style={{ textDecoration: "none", color: "currentColor" }}
+                    to="/order"
+                  >
+                    Đơn hàng của tôi
+                  </Link>
+                </li>
+                <li className="dropdown-item">
+                  <Link
+                    style={{ textDecoration: "none", color: "currentColor" }}
+                    to="/auth/change-password"
+                  >
+                    Đổi mật khẩu
+                  </Link>
+                </li>
+                <li className="dropdown-item" onClick={handleLogout}>
+                  <Link
+                    style={{ textDecoration: "none", color: "currentColor" }}
+                    to="/"
+                  >
+                    Đăng xuất
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </div>
+        )}
         <Link
           style={{ textDecoration: "none", color: "currentColor" }}
           to="/cart"

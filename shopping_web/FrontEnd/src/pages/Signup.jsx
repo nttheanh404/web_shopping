@@ -1,12 +1,30 @@
 import React, { useState } from "react";
-import "./CSS/LoginSignup.css";
+import { register } from "../services/auth"; // đường dẫn file API
+import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import hero1_image from "../components/assets/hero1_image.png";
+import "./CSS/LoginSignup.css";
 import { Link } from "react-router-dom";
 
 const Signup = () => {
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleRegister = async () => {
+    try {
+      const res = await register(form);
+      navigate("/login");
+    } catch (error) {
+      setErrorMsg(error || "Đăng ký thất bại!");
+    }
+  };
 
   const getInputClassName = (inputName) => {
     return `input-field ${window.innerWidth >= 768 ? "md" : ""} ${
@@ -27,6 +45,8 @@ const Signup = () => {
               type="text"
               placeholder="Your Name"
               name="name"
+              value={form.name}
+              onChange={handleChange}
               className={getInputClassName("name")}
               onFocus={() => setFocusedInput("name")}
               onBlur={() => setFocusedInput(null)}
@@ -40,6 +60,8 @@ const Signup = () => {
               type="email"
               placeholder="Email Address"
               name="email"
+              value={form.email}
+              onChange={handleChange}
               className={getInputClassName("email")}
               onFocus={() => setFocusedInput("email")}
               onBlur={() => setFocusedInput(null)}
@@ -53,6 +75,9 @@ const Signup = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
                 className={getInputClassName("password")}
                 onFocus={() => setFocusedInput("password")}
                 onBlur={() => setFocusedInput(null)}
@@ -65,17 +90,17 @@ const Signup = () => {
               </div>
             </div>
           </div>
+          {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
         </div>
-        <button>Continue</button>
+        <button onClick={handleRegister}>Continue</button>
         <p className="login-signup-login">
           Already have an account?{" "}
-          <Link to="/login" style={{ textDecoration: "none" }}>
+          <Link to="/login">
             <span>Log In Here</span>
           </Link>
         </p>
-
         <div className="login-signup-agree">
-          <input type="checkbox" name="" id="" />
+          <input type="checkbox" />
           <p>By continuing, I agree to the terms of use & privacy policy.</p>
         </div>
       </div>

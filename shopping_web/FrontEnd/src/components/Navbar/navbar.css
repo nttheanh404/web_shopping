@@ -68,7 +68,7 @@
   gap: 45px;
 }
 
-.nav-login-cart button {
+.login-button {
   background: #564081;
   color: #fff;
   padding: 15px 30px;
@@ -79,7 +79,7 @@
   cursor: pointer;
 }
 
-.nav-login-cart button:active {
+.login-button {
   background: #330647;
 }
 
@@ -99,6 +99,54 @@
 .nav-dropdown {
   display: none;
 }
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-button {
+  background-color: #564081;
+  padding: 15px 20px;
+  border-radius: 9999px;
+  color: #ffffff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  margin-top: 8px;
+  width: 192px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.user-icon {
+  display: inline;
+}
+
+.user-name {
+  display: inline;
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #e5e7eb;
+}
+
 @media (max-width: 1280px) {
   .navbar {
     padding: 12px 50px;
@@ -116,7 +164,7 @@
   .nav-login-cart {
     gap: 30px;
   }
-  .nav-login-cart button {
+  .nav-login-cart .login-button {
     width: 120px;
     height: 45px;
     font-size: 16px;
@@ -135,7 +183,7 @@
     gap: 25px;
     font-size: 14px;
   }
-  .nav-login-cart button {
+  .nav-login-cart .login-button {
     width: 120px;
     height: 45px;
     font-size: 14px;
@@ -146,6 +194,13 @@
   .nav-cart-count {
     width: 18px;
     height: 18px;
+  }
+  .user-name {
+    display: none;
+  }
+  .dropdown-button {
+    padding: 8px 12px;
+    font-size: 14px;
   }
 }
 @media (max-width: 800px) {

@@ -1,75 +1,115 @@
-import React, { useEffect, useState } from "react";
 import "./ListProduct.css";
-import cross_icon from "../../assets/cross_icon.png";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaPencilAlt } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
 
 const ListProduct = () => {
+  const authUrl = import.meta.env.VITE_BE_URL;
   const [allProducts, setAllProducts] = useState([]);
+  const navigate = useNavigate();
 
   const fetchInfo = async () => {
-    await fetch("http://localhost:4000/allproducts")
-      .then((res) => res.json())
-      .then((data) => {
-        setAllProducts(data);
-      });
+    try {
+      const res = await fetch(`${authUrl}/allproducts`);
+      const data = await res.json();
+      const activeProducts = data.filter((product) => !product.isDeleted);
+      setAllProducts(activeProducts);
+    } catch (err) {
+      console.error("Error loading product:", err);
+    }
+  };
+
+  const editProduct = (product) => {
+    navigate(`/updateproduct/${product._id}`, {
+      state: { productToUpdate: product },
+    });
   };
 
   useEffect(() => {
     fetchInfo();
   }, []);
 
-  const remove_product = async (id) => {
-    await fetch("http://localhost:4000/removeproduct", {
-      method: "POST",
-      headers: {
-        Accept: "application",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: id }),
-    });
-    await fetchInfo();
+  const removeProduct = async (id) => {
+    try {
+      console.log("ID sản phẩm cần xóa:", id);
+      const res = await fetch(`${authUrl}/removeproduct/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      setAllProducts(allProducts.filter((product) => product._id !== id));
+    } catch (err) {
+      console.error("Error while deleting product:", err);
+    }
   };
 
   return (
     <div className="list-product">
       <h1>All Products List</h1>
-      <div className="listproduct-format-main">
-        <p>Products</p>
-        <p>Title</p>
-        <p>Old Price</p>
-        <p>New Price</p>
-        <p>Category</p>
-        <p>Remove</p>
-      </div>
-      <div className="listproduct-allproducts">
-        <hr />
-        {allProducts.map((product, index) => {
-          return (
-            <>
-              <div
-                key={index}
-                className="listproduct-format-main listproduct-format"
-              >
-                <img
-                  src={product.image}
-                  alt=""
-                  className="listproduct-product-icon"
-                />
-                <p>{product.name}</p>
-                <p>${product.old_price}</p>
-                <p>${product.new_price}</p>
-                <p>{product.category}</p>
-                <img
-                  onClick={remove_product(product.id)}
-                  className="listproduct-remove-icon"
-                  src={cross_icon}
-                  alt=""
-                />
-              </div>
-              <hr />
-            </>
-          );
-        })}
-      </div>
+      {allProducts.length === 0 ? (
+        <p>There are no products.</p>
+      ) : (
+        <div className="list-product-table-container">
+          <table className="product-table">
+            <thead>
+              <tr>
+                <th colSpan={3}>Products</th>
+                <th colSpan={4}>Title</th>
+                <th colSpan={2}>Old Price</th>
+                <th colSpan={2}>Offer Price</th>
+                <th colSpan={2}>Category</th>
+                <th colSpan={5}>Description</th>
+                <th colSpan={2}>Activity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allProducts.map((product, index) => (
+                <tr key={index}>
+                  <td colSpan={3}>
+                    <img
+                      src={product.image}
+                      alt="product"
+                      className="list-product-icon"
+                    />
+                  </td>
+                  <td colSpan={4}>{product.name}</td>
+                  <td colSpan={2}>{product.old_price}đ</td>
+                  <td colSpan={2}>{product.new_price}đ</td>
+                  <td colSpan={2}>{product.category}</td>
+                  <td
+                    colSpan={5}
+                    style={{ maxWidth: "1000px", wordWrap: "break-word" }}
+                  >
+                    {product.description}
+                  </td>
+                  <td colSpan={2}>
+                    <div className="list-product-update-container">
+                      <div
+                        className="list-product-update-icon-container"
+                        onClick={() => editProduct(product)}
+                      >
+                        <FaPencilAlt className="list-product-update-icon" />
+                        <span>Update</span>
+                      </div>
+                      <div
+                        className="list-product-update-icon-container"
+                        onClick={() => removeProduct(product._id)}
+                      >
+                        <FaTrashAlt className="list-product-update-icon" />
+                        <span>Remove</span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
