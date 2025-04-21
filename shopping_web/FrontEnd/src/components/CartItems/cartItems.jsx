@@ -2,48 +2,87 @@ import React, { useContext } from "react";
 import "./cartItems.css";
 import { ShopContext } from "../../context/ShopContext";
 import remove_icon from "../assets/cart_cross_icon.png";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 const CartItems = () => {
-  const { getTotalCartAmount, all_product, cartItems, removeFromCart } =
-    useContext(ShopContext);
+  const {
+    allProduct,
+    cartItems,
+    removeFromCart,
+    increaseCartQuantity,
+    decreaseCartQuantity,
+    selectedItems,
+    getSelectedTotalAmount,
+    toggleSelectItem,
+  } = useContext(ShopContext);
+
+  // const formatCurrency = (value) => {
+  //   return value.toLocaleString("vi-VN") + "đ";
+  // };
+
+  // const parsePrice = (str) => parseInt(str.replace(/\./g, ""), 10);
+
   return (
     <div className="cart-items">
       <div className="cart-items-format-main">
         <p>Products</p>
         <p>Title</p>
         <p>Price</p>
+        <p>Size</p>
         <p>Quantity</p>
         <p>Total</p>
-        <p>Remove</p>
+        <p style={{ textAlign: "center" }}>Activity</p>
       </div>
       <hr />
-      {all_product.map((e) => {
-        if (cartItems[e.id] > 0) {
-          return (
-            <div>
-              <div className="cart-items-format cart-items-format-main">
-                <img className="cart-items-product-icon" src={e.image} alt="" />
-                <p>{e.name}</p>
-                <p>${e.new_price}</p>
-                <button className="cart-items-quantity">
-                  {cartItems[e.id]}
+      {Object.entries(cartItems).map(([key, quantity]) => {
+        if (quantity <= 0) return null;
+
+        const [productId, size] = key.split("_");
+        const product = allProduct.find((p) => p._id === productId);
+        if (!product) return null;
+
+        return (
+          <div key={key}>
+            <div className="cart-items-format cart-items-format-main">
+              <img
+                className="cart-items-product-icon"
+                src={product.image}
+                alt=""
+              />
+
+              <p>{product.name}</p>
+              <p>${product.new_price}</p>
+              <p>Size: {size}</p>
+              <div className="cart-items-quantity-control">
+                <button onClick={() => decreaseCartQuantity(product._id, size)}>
+                  -
                 </button>
-                <p>{e.new_price * cartItems[e.id]}</p>
+                <span>{quantity}</span>
+                <button onClick={() => increaseCartQuantity(product._id, size)}>
+                  +
+                </button>
+              </div>
+
+              <p>${(product.new_price * quantity).toFixed(1)}</p>
+
+              <div className="cart-items-remove-icon">
+                <input
+                  style={{ width: "20px", height: "20px" }}
+                  type="checkbox"
+                  checked={selectedItems.includes(key)}
+                  onChange={() => toggleSelectItem(key)}
+                />
+
                 <img
-                  className="cart-items-remove-icon"
                   src={remove_icon}
-                  onClick={() => {
-                    removeFromCart(e.id);
-                  }}
-                  alt=""
+                  onClick={() => removeFromCart(product._id, size)}
+                  alt="Remove"
                 />
               </div>
-              <hr />
             </div>
-          );
-        }
-        return null;
+            <hr />
+          </div>
+        );
       })}
       <div className="cart-items-down">
         <div className="cart-items-total">
@@ -51,7 +90,7 @@ const CartItems = () => {
           <div>
             <div className="cart-items-total-item">
               <p>Subtotal</p>
-              <p>${getTotalCartAmount()}</p>
+              <p>${getSelectedTotalAmount().toFixed(1)}</p>
             </div>
             <hr />
             <div className="cart-items-total-item">
@@ -61,12 +100,18 @@ const CartItems = () => {
             <hr />
             <div className="cart-items-total-item">
               <h3>Total</h3>
-              <h3>${getTotalCartAmount()}</h3>
+              <h3>${getSelectedTotalAmount().toFixed(1)}</h3>
             </div>
           </div>
-          <Link to="/checkout">
-            <button>PROCEED TO CHECKOUT</button>
-          </Link>
+          {selectedItems.length > 0 && cartItems ? (
+            <Link to="/checkout">
+              <button>PROCEED TO CHECKOUT</button>
+            </Link>
+          ) : (
+            <button disabled style={{ opacity: 0.6, cursor: "not-allowed" }}>
+              Please choose the product to checkout
+            </button>
+          )}
         </div>
         <div className="cart-items-promo-code">
           <p>If you have a promo code, Enter it here</p>

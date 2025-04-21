@@ -44,6 +44,8 @@ export const login = async (credentials) => {
 export const logout = async () => {
   try {
     const user = JSON.parse(localStorage.getItem("user"));
+    console.log("user", user.id);
+
     if (!user || !user.id) throw new Error("User not found");
 
     const response = await authAPI.post("/auth/logout", {

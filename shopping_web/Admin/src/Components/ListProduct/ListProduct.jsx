@@ -77,8 +77,8 @@ const ListProduct = () => {
                     />
                   </td>
                   <td colSpan={4}>{product.name}</td>
-                  <td colSpan={2}>{product.old_price}đ</td>
-                  <td colSpan={2}>{product.new_price}đ</td>
+                  <td colSpan={2}>${product.old_price}</td>
+                  <td colSpan={2}>${product.new_price}</td>
                   <td colSpan={2}>{product.category}</td>
                   <td
                     colSpan={5}

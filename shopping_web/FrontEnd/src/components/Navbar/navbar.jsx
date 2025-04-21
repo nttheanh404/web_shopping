@@ -10,7 +10,8 @@ import { getStorageData, removeStorageData } from "../../helpers/stored";
 import { IoPersonCircleOutline } from "react-icons/io5";
 
 const Navbar = () => {
-  const { getTotalCartItems } = useContext(ShopContext);
+  const { getTotalCartItems, resetCart, loadCartFromStorage } =
+    useContext(ShopContext);
   const menuRef = useRef();
   const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +19,7 @@ const Navbar = () => {
   useEffect(() => {
     if (userData && userData.name) {
       setUser(userData);
-      // loadCartFromStorage();
+      loadCartFromStorage();
     } else {
       setUser(null);
     }
@@ -34,6 +35,7 @@ const Navbar = () => {
       await logout(); // Gọi API logout
       removeStorageData("user");
       removeStorageData("accessToken");
+      resetCart(); // Xóa giỏ hàng
       setUser(null); // Cập nhật lại trạng thái người dùng
       setIsOpen(false);
     } catch (error) {
@@ -128,7 +130,7 @@ const Navbar = () => {
                     style={{ textDecoration: "none", color: "currentColor" }}
                     to="/profile"
                   >
-                    Hồ sơ
+                    User information
                   </Link>
                 </li>
                 <li className="dropdown-item">
@@ -136,7 +138,7 @@ const Navbar = () => {
                     style={{ textDecoration: "none", color: "currentColor" }}
                     to="/order"
                   >
-                    Đơn hàng của tôi
+                    My orders
                   </Link>
                 </li>
                 <li className="dropdown-item">
@@ -144,7 +146,7 @@ const Navbar = () => {
                     style={{ textDecoration: "none", color: "currentColor" }}
                     to="/auth/change-password"
                   >
-                    Đổi mật khẩu
+                    Change password
                   </Link>
                 </li>
                 <li className="dropdown-item" onClick={handleLogout}>
@@ -152,7 +154,7 @@ const Navbar = () => {
                     style={{ textDecoration: "none", color: "currentColor" }}
                     to="/"
                   >
-                    Đăng xuất
+                    Log out
                   </Link>
                 </li>
               </ul>

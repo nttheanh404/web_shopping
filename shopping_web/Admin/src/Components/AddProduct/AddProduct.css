@@ -66,6 +66,10 @@
   font-size: 16px;
   font-weight: 500;
 }
+
+.add-product-btn:hover {
+  background: #4b1e5a;
+}
 .size-options {
   display: flex;
   gap: 15px;
