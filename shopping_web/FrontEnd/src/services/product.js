@@ -22,6 +22,7 @@ export const getAllProducts = async () => {
 
 export const getProductById = async (id) => {
   try {
+    
     const response = await productAPI.get(`/product/${id}`);
     return response.data;
   } catch (error) {
