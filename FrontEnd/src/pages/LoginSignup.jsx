@@ -8,6 +8,57 @@ const LoginSignup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
 
+  const [state,setState] = useState("Login");
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    email: "",    
+  });
+  const changeHandler = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const login=async()=>{
+    console.log("Login",formData);
+    let responseData;
+    await fetch("http://localhost:4000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    }).then((response) =>response.json())
+    .then((data) => {
+      responseData = data;
+    })
+    if(responseData.success){
+      localStorage.setItem("auth-token", responseData.token);
+      window.location.replace("/");
+    }
+    else{
+      alert(responseData.message);
+    }
+  }
+  const signup=async()=>{
+    console.log("Sign Up",formData);
+    let responseData;
+    await fetch("http://localhost:4000/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    }).then((response) =>response.json())
+    .then((data) => {
+      responseData = data;
+    })
+    if(responseData.success){
+      localStorage.setItem("auth-token", responseData.token);
+      window.location.replace("/");
+    }
+    else{
+      alert(responseData.message);
+    }
+  }
   const getInputClassName = (inputName) => {
     return `input-field ${window.innerWidth >= 768 ? "md" : ""} ${
       focusedInput === inputName ? "focused" : ""
@@ -17,21 +68,23 @@ const LoginSignup = () => {
   return (
     <div className="login-signup">
       <div className="login-signup-container">
-        <h1>Sign Up</h1>
+        <h1>{state}</h1>
         <div className="login-signup-fields">
-          <div className="login-signup-name">
+          {state==="Sign Up"?<div className="login-signup-name">
             <p>
               Your Name <span style={{ color: "red" }}>*</span>
             </p>
             <input
               type="text"
               placeholder="Your Name"
-              name="name"
-              className={getInputClassName("name")}
-              onFocus={() => setFocusedInput("name")}
-              onBlur={() => setFocusedInput(null)}
+              name="username"
+              value={formData.username}
+              onChange={changeHandler}
+              // className={getInputClassName("name")}
+              // onFocus={() => setFocusedInput("name")}
+              // onBlur={() => setFocusedInput(null)}
             />
-          </div>
+          </div>:<></>}
           <div className="login-signup-mail">
             <p>
               Email Address <span style={{ color: "red" }}>*</span>
@@ -40,9 +93,11 @@ const LoginSignup = () => {
               type="email"
               placeholder="Email Address"
               name="email"
-              className={getInputClassName("email")}
-              onFocus={() => setFocusedInput("email")}
-              onBlur={() => setFocusedInput(null)}
+              value={formData.email}
+              onChange={changeHandler}
+              // className={getInputClassName("email")}
+              // onFocus={() => setFocusedInput("email")}
+              // onBlur={() => setFocusedInput(null)}
             />
           </div>
           <div className="login-signup-password">
@@ -53,9 +108,12 @@ const LoginSignup = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className={getInputClassName("password")}
-                onFocus={() => setFocusedInput("password")}
-                onBlur={() => setFocusedInput(null)}
+                name="password"
+                value={formData.password}
+                onChange={changeHandler}
+                // className={getInputClassName("password")}
+                // onFocus={() => setFocusedInput("password")}
+                // onBlur={() => setFocusedInput(null)}
               />
               <div
                 className="login-signup-showPassword"
@@ -66,10 +124,14 @@ const LoginSignup = () => {
             </div>
           </div>
         </div>
-        <button>Continue</button>
+        <button onClick={()=>{state==="Login"?login():signup()}}>Continue</button>
+        {state === "Sign Up" ? 
         <p className="login-signup-login">
-          Already have an account? <span>Log in here</span>
-        </p>
+          Already have an account? <span onClick={()=>{setState("Login")}}>Log in here</span>
+        </p>:
+        <p className="login-signup-login">
+          Create an account? <span onClick={()=>{setState("Sign Up")}}>Click here</span>
+        </p>}
         <div className="login-signup-agree">
           <input type="checkbox" name="" id="" />
           <p>By continuing, i agree to the terms of use & privacy policy.</p>
