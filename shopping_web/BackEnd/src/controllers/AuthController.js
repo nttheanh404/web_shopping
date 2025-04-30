@@ -37,4 +37,29 @@ const handleLogout = async (req, res) => {
   }
 };
 
-module.exports = { handleRegister, handleLogin, handleLogout };
+const handleChangePassword = async (req, res) => {
+  try {
+    const result = await authService.changePassword(req.body);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+const handleVerifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+    const result = await authService.verifyEmail(token);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+module.exports = {
+  handleRegister,
+  handleLogin,
+  handleLogout,
+  handleChangePassword,
+  handleVerifyEmail,
+};

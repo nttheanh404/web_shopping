@@ -27,6 +27,13 @@ const Sidebar = () => {
           </p>
         </div>
       </Link>
+      <Link to={"/chatbox"} style={{ textDecoration: "none" }}>
+        <div className="sidebar-item">
+          <p className="sidebar-item-text">
+            <span className="icon-management">💬</span> Respond customers
+          </p>
+        </div>
+      </Link>
     </div>
   );
 };

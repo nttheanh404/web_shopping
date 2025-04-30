@@ -27,7 +27,7 @@ const ProductDisplay = (props) => {
         "pendingAddToCart",
         JSON.stringify({ itemId: product._id, size: selectedSize })
       );
-      navigate("/auth/login");
+      navigate("/login");
       return;
     }
 

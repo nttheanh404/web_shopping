@@ -51,7 +51,7 @@ const CartItems = () => {
               />
 
               <p>{product.name}</p>
-              <p>${product.new_price}</p>
+              <p>${Number(product.new_price).toFixed(1)}</p>
               <p>Size: {size}</p>
               <div className="cart-items-quantity-control">
                 <button onClick={() => decreaseCartQuantity(product._id, size)}>

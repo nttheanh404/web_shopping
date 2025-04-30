@@ -4,7 +4,8 @@ import Sidebar from "../../Components/Sidebar/Sidebar";
 import { Routes, Route } from "react-router-dom";
 import AddProduct from "../../Components/AddProduct/AddProduct";
 import ListProduct from "../../Components/ListProduct/ListProduct";
-// import OrderManagement from "../../Components/OrderManagement/OrderManagement";
+import OrderManagement from "../../Components/OrderManagement/OrderManagement";
+import ChatWidget from "../../Components/ChatWidget/ChatWidget";
 
 const Admin = () => {
   return (
@@ -15,7 +16,8 @@ const Admin = () => {
         <Route path="/listproduct" element={<ListProduct />} />
         <Route path="/updateproduct/:id" element={<AddProduct />} />
         {/* <Route path="/revenue" element={<Revenue />} /> */}
-        {/* <Route path="/ordermanagement" element={<OrderManagement />} /> */}
+        <Route path="/ordermanagement" element={<OrderManagement />} />
+        <Route path="/chatbox" element={<ChatWidget />} />
       </Routes>
     </div>
   );

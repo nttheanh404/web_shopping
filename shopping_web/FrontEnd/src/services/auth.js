@@ -58,4 +58,27 @@ export const logout = async () => {
   }
 };
 
+export const changePassword = async ({ userId, oldPassword, newPassword }) => {
+  try {
+    const response = await authAPI.post("/auth/change-password", {
+      userId,
+      oldPassword,
+      newPassword,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Change password failed";
+  }
+};
+
+// Xác thực email
+export const verifyEmail = async (token) => {
+  try {
+    const response = await authAPI.get(`/auth/verify-email?token=${token}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Email verification failed";
+  }
+};
+
 export default authAPI;
