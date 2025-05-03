@@ -14,7 +14,7 @@ const createPaymentGateway = (req, total, order_id) => {
   let tmnCode = "CXSOE8I4";
   let secretKey = "YATOAUMR9KM6ZGUXS7SH5EVZRMS3DLY8";
   let vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-  let returnUrl = "http://localhost:5173/success?vnp_success=1";
+  let returnUrl = "http://localhost:5173/success-order?vnp_success=1";
   let orderId = order_id;
   let amount = total * 26000;
   // let amount = 10000;

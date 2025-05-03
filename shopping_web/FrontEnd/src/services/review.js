@@ -8,6 +8,7 @@ const reviewAPI = axios.create({
   headers: {
     "Content-Type": "application/json",
     //"Access-Control-Allow-Origin": "true",
+    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
   },
 });
 

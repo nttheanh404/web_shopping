@@ -39,7 +39,7 @@
   display: flex;
   gap: 8px;
   font-size: 1.5rem;
-  color: #f1c40f;
+  color: #f5f3c5;
 }
 
 .star {
@@ -47,7 +47,7 @@
 }
 
 .star.selected {
-  color: #f39c12;
+  color: #f9f21e;
 }
 
 /* Textarea */
@@ -82,7 +82,7 @@
 /* Submit Button */
 .submit-button {
   padding: 8px 16px;
-  background-color: #2980b9;
+  background-color: #8729b9;
   color: white;
   border-radius: 4px;
   font-size: 0.875rem;
@@ -90,5 +90,5 @@
 }
 
 .submit-button:hover {
-  background-color: #3498db;
+  background-color: #6e2496;
 }

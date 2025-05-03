@@ -16,12 +16,6 @@ const getChatHistory = async (req, res) => {
 const sendMessage = async (req, res) => {
   try {
     const { senderId, receiverId, content, isAdmin } = req.body;
-    console.log("Received message data:", {
-      senderId,
-      receiverId,
-      content,
-      isAdmin,
-    });
 
     // Kiểm tra các tham số có hợp lệ không
     if (!senderId || !receiverId || !content) {
@@ -47,7 +41,7 @@ const sendMessage = async (req, res) => {
   }
 };
 
-const ADMIN_ID = "6804c33032d8d3c161c45271";
+const ADMIN_ID = "6811c3de413dab1c1a26e3ed";
 
 const getAllChatUsers = async (req, res) => {
   try {

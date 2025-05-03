@@ -2,6 +2,12 @@ import "./AddProduct.css";
 import upload_area from "../../assets/upload_area.svg";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import image from "../../assets/hero_image.png";
+import {
+  uploadImage,
+  createProduct,
+  updateProduct,
+} from "../../services/product";
 
 function AddProduct() {
   const authUrl = import.meta.env.VITE_BE_URL;
@@ -34,7 +40,7 @@ function AddProduct() {
         size: productToUpdate.size,
         description: productToUpdate.description,
       });
-      setImagePreview(productToUpdate.image); // Hiển thị ảnh sản phẩm cũ
+      setImagePreview(productToUpdate.image);
     }
   }, [productToUpdate]);
 
@@ -75,21 +81,21 @@ function AddProduct() {
     });
   };
 
-  const uploadImage = async () => {
-    const formData = new FormData();
-    formData.append("image", imageFile);
+  // const uploadImage = async () => {
+  //   const formData = new FormData();
+  //   formData.append("image", imageFile);
 
-    try {
-      const res = await fetch(`${authUrl}/upload`, {
-        method: "POST",
-        body: formData,
-      });
-      return await res.json();
-    } catch (err) {
-      console.error("Error uploading image:", err);
-      return { success: false };
-    }
-  };
+  //   try {
+  //     const res = await fetch(`${authUrl}/upload`, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+  //     return await res.json();
+  //   } catch (err) {
+  //     console.error("Error uploading image:", err);
+  //     return { success: false };
+  //   }
+  // };
 
   const addOrUpdateProduct = async () => {
     if (!imageFile && !productDetails.image) {
@@ -98,35 +104,25 @@ function AddProduct() {
     }
 
     const uploadResult = imageFile
-      ? await uploadImage()
+      ? await uploadImage(imageFile)
       : { success: true, url: productDetails.image };
-    console.log(uploadResult);
+
     if (uploadResult.success) {
       const product = {
         ...productDetails,
         image: uploadResult.url,
       };
 
-      const method = productToUpdate ? "PUT" : "POST";
-      const url = productToUpdate
-        ? `${authUrl}/updateproduct/${productToUpdate._id}`
-        : `${authUrl}/addproduct`;
-
       try {
-        const res = await fetch(url, {
-          method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(product),
-        });
+        const result = productToUpdate
+          ? await updateProduct(productToUpdate._id, product)
+          : await createProduct(product);
 
-        const data = await res.json();
-        if (data.success) {
+        if (result.success) {
           alert(`${productToUpdate ? "Update" : "Add"} product successfully!`);
-          navigate(productToUpdate ? "/listproduct" : "/addproduct"); // Điều hướng về trang danh sách sản phẩm
+          navigate("/admin/listproduct");
         } else {
-          alert(`${productToUpdate ? "Update" : "Add"} product successfully!.`);
+          alert(`${productToUpdate ? "Update" : "Add"} product failed!`);
         }
       } catch (err) {
         console.error("Error while processing product:", err);
@@ -138,138 +134,143 @@ function AddProduct() {
   };
 
   return (
-    <div className="add-product">
-      <div className="add-product-item-field">
-        <p>Product title</p>
-        <input
-          value={productDetails.name}
-          onChange={handleChange}
-          type="text"
-          name="name"
-          placeholder="Enter the product name"
-        />
-      </div>
-
-      <div className="add-product-price">
+    <>
+      <div className="add-product">
         <div className="add-product-item-field">
-          <p>Price</p>
+          <p>Product title</p>
           <input
-            value={productDetails.old_price}
+            value={productDetails.name}
             onChange={handleChange}
             type="text"
-            name="old_price"
-            placeholder="Enter the price"
+            name="name"
+            placeholder="Enter the product name"
           />
+        </div>
+
+        <div className="add-product-price">
+          <div className="add-product-item-field">
+            <p>Price</p>
+            <input
+              value={productDetails.old_price}
+              onChange={handleChange}
+              type="text"
+              name="old_price"
+              placeholder="Enter the price"
+            />
+          </div>
+          <div className="add-product-item-field">
+            <p>Offer Price</p>
+            <input
+              value={productDetails.new_price}
+              onChange={handleChange}
+              type="text"
+              name="new_price"
+              placeholder="Enter the offer price"
+            />
+          </div>
+        </div>
+
+        <div className="add-product-item-field">
+          <p>Size</p>
+          <div className="size-options">
+            <label>
+              <input
+                type="checkbox"
+                value="S"
+                onChange={handleSizeChange}
+                checked={productDetails.size.includes("S")}
+              />
+              S
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                value="M"
+                onChange={handleSizeChange}
+                checked={productDetails.size.includes("M")}
+              />
+              M
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                value="L"
+                onChange={handleSizeChange}
+                checked={productDetails.size.includes("L")}
+              />
+              L
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                value="XL"
+                onChange={handleSizeChange}
+                checked={productDetails.size.includes("XL")}
+              />
+              XL
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                value="XXL"
+                onChange={handleSizeChange}
+                checked={productDetails.size.includes("XXL")}
+              />
+              XXL
+            </label>
+          </div>
+        </div>
+
+        <div className="add-product-item-field">
+          <p>Product Category</p>
+          <select
+            value={productDetails.category}
+            onChange={handleChange}
+            name="category"
+            className="add-product-selector"
+          >
+            <option value="men">Men</option>
+            <option value="women">Women</option>
+            <option value="kid">Kid</option>
+          </select>
         </div>
         <div className="add-product-item-field">
-          <p>Offer Price</p>
-          <input
-            value={productDetails.new_price}
+          <p>Description</p>
+          <textarea
+            value={productDetails.description}
             onChange={handleChange}
-            type="text"
-            name="new_price"
-            placeholder="Enter the offer price"
+            name="description"
+            placeholder="Enter the description"
+            rows="4"
           />
         </div>
-      </div>
 
-      <div className="add-product-item-field">
-        <p>Size</p>
-        <div className="size-options">
-          <label>
-            <input
-              type="checkbox"
-              value="S"
-              onChange={handleSizeChange}
-              checked={productDetails.size.includes("S")}
+        <div className="add-product-item-field">
+          <label htmlFor="file-input">
+            <img
+              src={imagePreview || upload_area}
+              className="add-product-thumbnail-img"
+              alt="Thumbnail"
             />
-            S
           </label>
-          <label>
-            <input
-              type="checkbox"
-              value="M"
-              onChange={handleSizeChange}
-              checked={productDetails.size.includes("M")}
-            />
-            M
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              value="L"
-              onChange={handleSizeChange}
-              checked={productDetails.size.includes("L")}
-            />
-            L
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              value="XL"
-              onChange={handleSizeChange}
-              checked={productDetails.size.includes("XL")}
-            />
-            XL
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              value="XXL"
-              onChange={handleSizeChange}
-              checked={productDetails.size.includes("XXL")}
-            />
-            XXL
-          </label>
-        </div>
-      </div>
-
-      <div className="add-product-item-field">
-        <p>Product Category</p>
-        <select
-          value={productDetails.category}
-          onChange={handleChange}
-          name="category"
-          className="add-product-selector"
-        >
-          <option value="men">Men</option>
-          <option value="women">Women</option>
-          <option value="kid">Kid</option>
-        </select>
-      </div>
-      <div className="add-product-item-field">
-        <p>Description</p>
-        <textarea
-          value={productDetails.description}
-          onChange={handleChange}
-          name="description"
-          placeholder="Enter the description"
-          rows="4"
-        />
-      </div>
-
-      <div className="add-product-item-field">
-        <label htmlFor="file-input">
-          <img
-            src={imagePreview || upload_area}
-            className="add-product-thumbnail-img"
-            alt="Thumbnail"
+          <input
+            onChange={handleFileChange}
+            type="file"
+            name="image"
+            id="file-input"
+            hidden
+            accept="image/*"
           />
-        </label>
-        <input
-          onChange={handleFileChange}
-          type="file"
-          name="image"
-          id="file-input"
-          hidden
-          accept="image/*"
-        />
-      </div>
+        </div>
 
-      <button onClick={addOrUpdateProduct} className="add-product-btn">
-        {productToUpdate ? "UPDATE" : "ADD"}
-      </button>
-    </div>
+        <button onClick={addOrUpdateProduct} className="add-product-btn">
+          {productToUpdate ? "UPDATE" : "ADD"}
+        </button>
+      </div>
+      <div className="add-product-image-preview">
+        <img src={image} alt="" />
+      </div>
+    </>
   );
 }
 

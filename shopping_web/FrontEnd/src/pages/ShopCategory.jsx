@@ -6,7 +6,12 @@ import Item from "../components/Item/item";
 import { HelmetProvider } from "react-helmet-async";
 import { getAllProducts } from "../services/product";
 import { IoMdSearch } from "react-icons/io";
+import ChatWidget from "../components/ChatWidget/chatWidget";
+import { getStorageData } from "../helpers/stored";
 const ShopCategory = (props) => {
+  const userId = getStorageData("user")?.id || null;
+  console.log("userId", userId);
+
   const [products, setProducts] = useState([]);
   const [sortOption, setSortOption] = useState("");
   const [priceFilter, setPriceFilter] = useState("");
@@ -49,7 +54,12 @@ const ShopCategory = (props) => {
   return (
     <>
       <HelmetProvider>
-        <title>Product</title>
+        <title>
+          {props.category
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")}
+        </title>
       </HelmetProvider>
       <div className="shop-category">
         {/* <img className="shop-category-banner" src={props.banner} alt="banner" /> */}
@@ -75,7 +85,7 @@ const ShopCategory = (props) => {
           />
         </div>
 
-        <div className="shop-category-indexSort">
+        <div className="shop-category-controls">
           <p>
             <span>
               Showing{" "}
@@ -85,63 +95,65 @@ const ShopCategory = (props) => {
               products
             </span>
           </p>
-          <div className="shop-category-search-container">
+          <div className="shop-category-controls-right">
             <div className="shop-category-search">
+              <IoMdSearch className="shop-category-search-icon" />
               <input
                 type="text"
                 placeholder="Search for products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <IoMdSearch className="shop-category-search-icon" />
+            </div>
+            <div className="shop-category-dropdowns">
+              <select
+                value={priceFilter}
+                onChange={(e) => setPriceFilter(e.target.value)}
+                className="dropdown"
+              >
+                <option value="">All Prices</option>
+                <option value="below-50">Below $50</option>
+                <option value="50-100">$50 - $100</option>
+                <option value="above-100">Above $100</option>
+              </select>
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="dropdown"
+              >
+                <option value="">Default</option>
+                <option value="price-asc">Price: Low → High</option>
+                <option value="price-desc">Price: High → Low</option>
+                <option value="name-asc">Name: A → Z</option>
+                <option value="name-desc">Name: Z → A</option>
+              </select>
             </div>
           </div>
-
-          {/* Lọc theo giá */}
-          <div>
-            <label htmlFor="filter">Price: </label>
-            <select
-              id="filter"
-              value={priceFilter}
-              onChange={(e) => setPriceFilter(e.target.value)}
-              className="shop-category-filter"
-            >
-              <option value="">All</option>
-              <option value="below-50">Below $50</option>
-              <option value="50-100">From $50 to $100</option>
-              <option value="above-100">Above $100</option>
-            </select>
-          </div>
-
-          {/* Sắp xếp */}
-          <div>
-            <label htmlFor="sort">Sort: </label>
-            <select
-              id="sort"
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-              className="shop-category-sort"
-            >
-              <option value="">Default</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="name-asc">Name: A-Z</option>
-              <option value="name-desc">Name: Z-A</option>
-            </select>
-          </div>
         </div>
-        <div className="shop-category-products">
-          {filteredAndSortedProducts.slice(0, visibleCount).map((item, i) => (
-            <Item
-              key={i}
-              id={item._id}
-              name={item.name}
-              image={item.image}
-              new_price={item.new_price}
-              old_price={item.old_price}
-            />
-          ))}
+
+        <div>
+          {filteredAndSortedProducts.length === 0 ? (
+            <div className="no-products-container">
+              <p className="no-products-message">No products found.</p>
+            </div>
+          ) : (
+            <div className="shop-category-products">
+              {filteredAndSortedProducts
+                .slice(0, visibleCount)
+                .map((item, i) => (
+                  <Item
+                    key={i}
+                    id={item._id}
+                    name={item.name}
+                    image={item.image}
+                    new_price={item.new_price}
+                    old_price={item.old_price}
+                  />
+                ))}
+            </div>
+          )}
         </div>
+
         {visibleCount < filteredAndSortedProducts.length && (
           <div
             className="shop-category-more"
@@ -151,6 +163,7 @@ const ShopCategory = (props) => {
           </div>
         )}
       </div>
+      <ChatWidget userId={userId} />
     </>
   );
 };

@@ -5,6 +5,7 @@ const chatAPI = axios.create({
   baseURL: authUrl + "/",
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
   },
 });
 
@@ -12,13 +13,14 @@ export const sendMessage = async ({ receiverId, content, isAdmin }) => {
   try {
     // Lấy senderId từ localStorage
     const user = JSON.parse(localStorage.getItem("user"));
+    console.log("User from localStorage:", user);
 
     // Kiểm tra nếu user tồn tại và có _id
-    if (!user || !user._id) {
+    if (!user || !user.id) {
       throw new Error("Không tìm thấy senderId trong localStorage");
     }
 
-    const senderId = user._id;
+    const senderId = user.id;
     console.log("Sender ID:", senderId);
 
     const res = await chatAPI.post("/chat/send", {

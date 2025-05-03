@@ -4,12 +4,14 @@ const chatAPI = axios.create({
   baseURL: "http://localhost:8080",
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
   },
 });
 
 export const sendMessage = async ({ receiverId, content, isAdmin }) => {
   try {
-    const senderId = localStorage.getItem("userId");
+    const admin = JSON.parse(localStorage.getItem("adminInfo"));
+    const senderId = admin?.id;
     console.log("Sender ID:", senderId);
 
     const res = await chatAPI.post("/chat/send", {

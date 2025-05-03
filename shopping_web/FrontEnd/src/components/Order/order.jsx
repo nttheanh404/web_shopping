@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import RatingModal from "../RatingModal/ratingModal";
 import { createReview } from "../../services/review";
 import "./order.css";
+import { HelmetProvider } from "react-helmet-async";
 
 const statusLabels = {
   pending: "🔄 Pending",
@@ -137,6 +138,9 @@ const Order = () => {
 
   return (
     <>
+      <HelmetProvider>
+        <title>My Orders</title>
+      </HelmetProvider>
       {reviewSuccess && (
         <div className="review-success-message">
           Review successful! Thanks for sharing your opinion.
@@ -189,8 +193,8 @@ const Order = () => {
                       <span style={{ fontWeight: "600" }}>Payment:</span>{" "}
                       {translatePaymentMethod(order.payment_method)} (
                       {order.payment_status === "pending"
-                        ? "Chưa thanh toán"
-                        : "Đã thanh toán"}
+                        ? "Not yet paid"
+                        : "Paid"}
                       )
                     </p>
                   </div>

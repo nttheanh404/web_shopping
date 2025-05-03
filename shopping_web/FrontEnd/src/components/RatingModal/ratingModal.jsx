@@ -7,7 +7,7 @@ const RatingModal = ({ product, onClose, onSubmit }) => {
 
   const handleSubmit = () => {
     if (!rating || !comment.trim()) {
-      alert("Vui lòng đánh giá và viết nhận xét.");
+      alert("Please rate and write a review.");
       return;
     }
     onSubmit({
@@ -15,13 +15,13 @@ const RatingModal = ({ product, onClose, onSubmit }) => {
       rating,
       comment,
     });
-    onClose(); // đóng modal sau khi gửi
+    onClose();
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2 className="modal-title">Đánh giá sản phẩm</h2>
+        <h2 className="modal-title">Product reviews</h2>
         <p className="modal-product-name">{product.name}</p>
         <div className="stars">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -36,17 +36,17 @@ const RatingModal = ({ product, onClose, onSubmit }) => {
         </div>
         <textarea
           rows="4"
-          placeholder="Viết nhận xét của bạn..."
+          placeholder="Write your review..."
           className="textarea"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         ></textarea>
         <div className="modal-actions">
           <button onClick={onClose} className="cancel-button">
-            Huỷ
+            Cancel
           </button>
           <button onClick={handleSubmit} className="submit-button">
-            Gửi
+            Submit
           </button>
         </div>
       </div>

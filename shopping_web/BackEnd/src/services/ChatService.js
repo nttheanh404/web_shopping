@@ -28,13 +28,11 @@ const getMessagesBySenderAndReceiver = async (senderId, receiverId) => {
 
 const getAllChatUsers = async (adminId) => {
   const adminObjectId = new mongoose.Types.ObjectId(adminId);
-  console.log("Admin ID:", adminObjectId);
 
   // Lấy tất cả các user đã từng gửi hoặc nhận với admin
   const messages = await Message.find({
     $or: [{ senderId: adminObjectId }, { receiverId: adminObjectId }],
   });
-  console.log(messages);
 
   const userSet = new Set();
 

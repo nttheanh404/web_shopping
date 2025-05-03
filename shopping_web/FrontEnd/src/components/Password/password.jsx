@@ -3,7 +3,7 @@ import "./password.css";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-// import { Helmet } from "react-helmet-async";
+import { HelmetProvider } from "react-helmet-async";
 import { changePassword } from "../../services/auth";
 // import { getStorageData } from "../../helpers/stored";
 
@@ -64,9 +64,9 @@ const ChangePassword = () => {
 
   return (
     <>
-      {/* <Helmet>
-        <title>Đổi mật khẩu</title>
-      </Helmet> */}
+      <HelmetProvider>
+        <title>Change Password</title>
+      </HelmetProvider>
       <div className="change-password-container">
         <div className="change-password-box">
           <h1 className="change-password-title">Change Password</h1>

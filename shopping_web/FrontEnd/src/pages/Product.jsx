@@ -32,7 +32,12 @@ const Product = () => {
         <Breadcrum product={productDetails} />
         <ProductDisplay product={productDetails} />
         {productDetails && <DescriptionBox productId={productDetails._id} />}
-        <RelatedProducts />
+        {productDetails && (
+          <RelatedProducts
+            category={productDetails.category}
+            currentProductId={productDetails._id}
+          />
+        )}
       </div>
     </>
   );

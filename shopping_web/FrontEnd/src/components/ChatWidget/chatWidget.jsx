@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { getChatHistory, sendMessage } from "../../services/chat";
 import { io } from "socket.io-client";
-import "./ChatWidget.css";
+import "./chatWidget.css";
 
 const socket = io("http://localhost:8080");
 
@@ -30,11 +30,11 @@ const ChatWidget = ({ userId, isAdmin = false }) => {
       const res = await getChatHistory(userId);
       setChat(res);
     } catch (err) {
-      console.error("Không lấy được lịch sử chat:", err);
+      console.error("Cannot get chat history:", err);
     }
   };
 
-  const ADMIN_ID = "6804c33032d8d3c161c45271";
+  const ADMIN_ID = "6811c3de413dab1c1a26e3ed";
 
   const handleSend = async () => {
     if (!message.trim()) return;
@@ -52,7 +52,7 @@ const ChatWidget = ({ userId, isAdmin = false }) => {
       setChat((prev) => [...prev, res]);
       setMessage("");
     } catch (err) {
-      console.error("Lỗi gửi tin nhắn:", err);
+      console.error("Error sending message:", err);
     }
   };
 
@@ -66,14 +66,14 @@ const ChatWidget = ({ userId, isAdmin = false }) => {
         onClick={() => setOpen((prev) => !prev)}
         className="chat-toggle-button"
       >
-        {open ? "Đóng chat" : "💬 Chat với Admin"}
+        {open ? "Close" : "💬 Chat with Admin"}
       </button>
 
       {open && (
         <div className="chat-box">
           {/* Header */}
           <div className="chat-header">
-            <span>Hỗ trợ trực tuyến</span>
+            <span>Online support</span>
             <button
               onClick={() => setOpen(false)}
               className="chat-close-button"
@@ -104,10 +104,10 @@ const ChatWidget = ({ userId, isAdmin = false }) => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder="Nhập tin nhắn..."
+              placeholder="Enter a message..."
             />
             <button onClick={handleSend} className="chat-send-button">
-              Gửi
+              Send
             </button>
           </div>
         </div>

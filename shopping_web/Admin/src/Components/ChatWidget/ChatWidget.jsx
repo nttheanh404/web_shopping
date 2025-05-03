@@ -1,16 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   getAllChatUsers,
   getChatHistory,
   sendMessage,
-} from "../../services/chat"; // sửa path tùy dự án
+} from "../../services/chat";
 import "./ChatWidget.css";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:8080");
 
 const ChatWidget = () => {
   const [chatUsers, setChatUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [unreadMessages, setUnreadMessages] = useState({});
+  const chatRef = useRef(null);
+
+  useEffect(() => {
+    chatRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatHistory]);
+
+  useEffect(() => {
+    socket.connect();
+
+    // Lắng nghe tin nhắn đến
+    const admin = JSON.parse(localStorage.getItem("adminInfo"));
+    socket.emit("join", admin?.id);
+    socket.on("newMessage", (message) => {
+      if (selectedUser && message.senderId === selectedUser) {
+        setChatHistory((prev) => [...prev, message]);
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [selectedUser]);
 
   // Lấy danh sách user từng nhắn
   useEffect(() => {
@@ -29,10 +55,10 @@ const ChatWidget = () => {
   // Lấy lịch sử chat khi chọn user
   useEffect(() => {
     if (selectedUser) {
+      console.log("Selected user:", selectedUser);
       const fetchChatHistory = async () => {
         try {
           const history = await getChatHistory(selectedUser);
-
           setChatHistory(history);
         } catch (err) {
           console.error("Lỗi khi lấy lịch sử chat:", err);
@@ -41,40 +67,85 @@ const ChatWidget = () => {
       fetchChatHistory();
     }
   }, [selectedUser]);
-  console.log(localStorage.getItem("userId"));
+
+  const admin = JSON.parse(localStorage.getItem("adminInfo"));
+
+  // const handleSend = async () => {
+  //   if (!newMessage.trim()) return;
+  //   try {
+  //     await sendMessage({
+  //       senderId: admin?.id,
+  //       receiverId: selectedUser,
+  //       content: newMessage,
+  //       isAdmin: true,
+  //     });
+  //     setNewMessage("");
+  //     const updatedHistory = await getChatHistory(selectedUser);
+  //     setChatHistory(updatedHistory);
+  //   } catch (err) {
+  //     console.error("Lỗi khi gửi tin nhắn:", err);
+  //   }
+  // };
+
   const handleSend = async () => {
     if (!newMessage.trim()) return;
+
+    const messageData = {
+      senderId: admin?.id,
+      receiverId: selectedUser,
+      content: newMessage,
+      isAdmin: true,
+    };
+
     try {
-      await sendMessage({
-        senderId: localStorage.getItem("userId"),
-        receiverId: selectedUser,
-        content: newMessage,
-        isAdmin: true,
-      });
+      await sendMessage(messageData);
+      socket.emit("sendMessage", messageData);
+      setChatHistory((prev) => [...prev, { ...messageData, _id: Date.now() }]);
       setNewMessage("");
-      const updatedHistory = await getChatHistory(selectedUser);
-      setChatHistory(updatedHistory);
     } catch (err) {
       console.error("Lỗi khi gửi tin nhắn:", err);
     }
   };
 
+  const handleSelectUser = (user) => {
+    console.log("Selected user:", user);
+    setSelectedUser(user);
+    // Khi chọn người dùng, đánh dấu là đã xem tin nhắn
+    setUnreadMessages((prev) => ({
+      ...prev,
+      [user]: false,
+    }));
+  };
+
+  const handleNewMessage = (message) => {
+    if (selectedUser !== message.senderId) {
+      // Nếu người dùng chưa được chọn, đánh dấu tin nhắn là chưa xem
+      setUnreadMessages((prev) => ({
+        ...prev,
+        [message.senderId]: true,
+      }));
+    }
+
+    // Cập nhật lịch sử chat
+    setChatHistory((prevHistory) => [...prevHistory, message]);
+  };
+
   return (
     <div className="chat-widget-container">
       <div className="chat-users-list">
-        <h3>Khách hàng</h3>
+        <h3>Customer: </h3>
         {chatUsers.length === 0 ? (
-          <p>Chưa có khách hàng nào nhắn.</p>
+          <p>No customers have messaged yet.</p>
         ) : (
           chatUsers.map((user) => (
             <div
-              key={user._id}
+              key={user}
               className={`chat-user-box ${
-                selectedUser?._id === user._id ? "selected" : ""
-              }`}
-              onClick={() => setSelectedUser(user)}
+                selectedUser === user ? "selected" : ""
+              } ${unreadMessages[user] ? "unread" : ""}`}
+              onClick={() => handleSelectUser(user)}
             >
-              <span>{user.name || user.email || "Người dùng ẩn danh"}</span>
+              <span>ID: {user || "Anonymous user"}</span>
             </div>
           ))
         )}
@@ -84,7 +155,7 @@ const ChatWidget = () => {
         {selectedUser ? (
           <>
             <div className="chat-header">
-              <h4>Chat với: {selectedUser.name || selectedUser.email}</h4>
+              <h4>Chat with: {selectedUser}</h4>
             </div>
             <div className="chat-messages">
               {chatHistory.map((msg) => (
@@ -95,20 +166,22 @@ const ChatWidget = () => {
                   <span>{msg.content}</span>
                 </div>
               ))}
+              <div ref={chatRef} />
             </div>
             <div className="chat-input">
               <input
                 type="text"
-                placeholder="Nhập tin nhắn..."
+                placeholder="Enter a message..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
               />
-              <button onClick={handleSend}>Gửi</button>
+              <button onClick={handleSend}>Send</button>
             </div>
           </>
         ) : (
           <p className="chat-placeholder">
-            Chọn một khách hàng để bắt đầu chat.
+            Select a customer to start chatting.
           </p>
         )}
       </div>

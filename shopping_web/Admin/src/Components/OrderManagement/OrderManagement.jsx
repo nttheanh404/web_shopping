@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./OrderManagement.css";
 import { FiSearch, FiFilter } from "react-icons/fi";
+import { getAllOrders, updateOrderStatus } from "../../services/order";
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -14,9 +15,7 @@ const OrderManagement = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:8080/order");
-      if (!res.ok) throw new Error("Lỗi khi fetch đơn hàng");
-      const data = await res.json();
+      const data = await getAllOrders();
       setOrders(data);
     } catch (err) {
       console.error("Lỗi khi lấy đơn hàng:", err);
@@ -32,26 +31,17 @@ const OrderManagement = () => {
   const translatePaymentMethod = (method) => {
     switch (method) {
       case "cash_on_delivery":
-        return "Thanh toán khi nhận hàng";
+        return "Cash on Delivery";
       case "VNPay_bank_transfer":
         return "VNPay";
       default:
-        return "Chưa chọn phương thức";
+        return "Method not selected";
     }
   };
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:8080/order/status/${orderId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!res.ok) throw new Error("Lỗi khi cập nhật trạng thái");
-
+      await updateOrderStatus(orderId, newStatus);
       const updatedOrders = orders.map((order) =>
         order._id === orderId ? { ...order, order_status: newStatus } : order
       );
@@ -98,18 +88,18 @@ const OrderManagement = () => {
       return sortByTotal === "asc" ? totalA - totalB : totalB - totalA;
     });
 
-  if (loading) return <p>Đang tải đơn hàng...</p>;
+  if (loading) return <p>Loading orders...</p>;
 
   return (
     <div className="manage-orders">
-      <h2>Quản lý đơn hàng</h2>
+      <h2>Order management</h2>
 
       <div className="order-filters">
         <div className="filter-group">
           <FiSearch className="icon" />
           <input
             type="text"
-            placeholder="Tìm mã đơn, người nhận..."
+            placeholder="Find order code, recipient..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -121,16 +111,16 @@ const OrderManagement = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="">Tất cả trạng thái</option>
-            <option value="pending">Đang xử lý</option>
-            <option value="shipping">Đang giao hàng</option>
-            <option value="completed">Hoàn tất</option>
-            <option value="cancelled">Đã huỷ</option>
+            <option value="">All status</option>
+            <option value="pending">Pending</option>
+            <option value="shipping">Shipping</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
           </select>
         </div>
 
         <div className="filter-group">
-          <label>Từ ngày</label>
+          <label>From date</label>
           <input
             type="date"
             value={startDate}
@@ -139,7 +129,7 @@ const OrderManagement = () => {
         </div>
 
         <div className="filter-group">
-          <label>Đến ngày</label>
+          <label>To date</label>
           <input
             type="date"
             value={endDate}
@@ -148,44 +138,44 @@ const OrderManagement = () => {
         </div>
 
         <div className="filter-group">
-          <label>Thanh toán</label>
+          <label>Payment</label>
           <select
             value={paymentFilter}
             onChange={(e) => setPaymentFilter(e.target.value)}
           >
-            <option value="">Tất cả</option>
-            <option value="cash_on_delivery">Khi nhận hàng</option>
+            <option value="">All</option>
+            <option value="cash_on_delivery">Cash on Delivery</option>
             <option value="VNPay_bank_transfer">VNPay</option>
           </select>
         </div>
 
         <div className="filter-group">
-          <label>Sắp xếp</label>
+          <label>Sort</label>
           <select
             value={sortByTotal}
             onChange={(e) => setSortByTotal(e.target.value)}
           >
-            <option value="">-- Theo tổng tiền --</option>
-            <option value="asc">Tăng dần</option>
-            <option value="desc">Giảm dần</option>
+            <option value="">-- Total amount --</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
           </select>
         </div>
       </div>
 
       {filteredOrders.length === 0 ? (
-        <p>Không tìm thấy đơn hàng phù hợp.</p>
+        <p>No matching order found.</p>
       ) : (
         <div className="order-table-container">
           <table className="order-table">
             <thead>
               <tr>
-                <th>Mã đơn hàng</th>
-                <th>Ngày đặt</th>
-                <th>Trạng thái</th>
-                <th>Tổng tiền</th>
-                <th>Địa chỉ giao hàng</th>
-                <th>Phương thức thanh toán</th>
-                <th>Sản phẩm</th>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Delivery address</th>
+                <th>Payment method</th>
+                <th>Product</th>
               </tr>
             </thead>
             <tbody>
@@ -200,26 +190,26 @@ const OrderManagement = () => {
                         handleStatusChange(order._id, e.target.value)
                       }
                     >
-                      <option value="pending">Đang xử lý</option>
-                      <option value="shipping">Đang giao hàng</option>
-                      <option value="completed">Hoàn tất</option>
-                      <option value="cancelled">Đã huỷ</option>
+                      <option value="pending">Pending</option>
+                      <option value="shipping">Shipping</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
                     </select>
                   </td>
-                  <td>{Number(order.order_total).toLocaleString()} VND</td>
+                  <td>${Number(order.order_total).toLocaleString()}</td>
                   <td>
                     {order.shipping_address ? (
                       <>
-                        Người nhận: {order.shipping_address.name}
+                        Receiver: {order.shipping_address.name}
                         <br />
-                        Địa chỉ: {order.shipping_address.address},{" "}
+                        Address: {order.shipping_address.address},{" "}
                         {order.shipping_address.ward},{" "}
                         {order.shipping_address.district},{" "}
                         {order.shipping_address.city} <br />
-                        SĐT: {order.shipping_address.phone}
+                        Phone: {order.shipping_address.phone}
                       </>
                     ) : (
-                      <p>Không có địa chỉ</p>
+                      <p>No address available</p>
                     )}
                   </td>
                   <td>{translatePaymentMethod(order.payment_method)}</td>
@@ -233,30 +223,21 @@ const OrderManagement = () => {
                               alt={item.name}
                               className="product-image"
                             />
-                            <strong>{item.name}</strong> Size: {item.size} - Số
-                            lượng: {item.quantity} - Giá:{" "}
-                            {item.new_price &&
-                            !isNaN(
-                              Number(
-                                item.new_price
-                                  .replace(/\./g, "")
-                                  .replace(",", ".")
-                              )
-                            )
-                              ? Number(
-                                  item.new_price
-                                    .replace(/\./g, "")
-                                    .replace(",", ".")
-                                ).toLocaleString("vi-VN", {
+                            <strong>{item.name}</strong> Size: {item.size} -
+                            Quantity: {item.quantity} - Price:{" "}
+                            {item.new_price && !isNaN(Number(item.new_price))
+                              ? Number(item.new_price).toLocaleString("en-US", {
                                   style: "currency",
-                                  currency: "VND",
+                                  currency: "USD",
+                                  minimumFractionDigits: 1,
+                                  maximumFractionDigits: 1,
                                 })
-                              : "Giá không hợp lệ"}
+                              : "Price is not valid"}
                           </li>
                         ))}
                       </ul>
                     ) : (
-                      <p>Không có sản phẩm nào trong đơn hàng này.</p>
+                      <p>There are no products in this order.</p>
                     )}
                   </td>
                 </tr>

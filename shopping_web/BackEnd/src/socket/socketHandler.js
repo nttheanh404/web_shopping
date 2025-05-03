@@ -4,7 +4,7 @@ const chatService = require("../services/ChatService");
 const setupSocket = (io) => {
   io.on("connection", (socket) => {
     socket.on("join", (userId) => {
-      console.log(`User ${userId} joined room`);
+      // console.log(`User ${userId} joined room`);
       socket.join(userId);
     });
 
@@ -20,11 +20,11 @@ const setupSocket = (io) => {
       });
 
       // Gửi đến người nhận
-      io.to(receiverId).emit("receive_message", savedMessage);
+      io.to(receiverId).emit("newMessage", savedMessage);
     });
 
     socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
+      // console.log("User disconnected:", socket.id);
     });
   });
 };

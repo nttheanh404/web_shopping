@@ -10,6 +10,8 @@ import { getStorageData } from "../helpers/stored";
 const Shop = () => {
   const userId = getStorageData("user")?.id || null;
   console.log("userId", userId);
+
+
   return (
     <>
       <HelmetProvider>

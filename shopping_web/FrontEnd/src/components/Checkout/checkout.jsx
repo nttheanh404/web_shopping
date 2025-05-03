@@ -8,6 +8,7 @@ import { MdOutlinePayment } from "react-icons/md";
 import { GiConfirmed } from "react-icons/gi";
 import { createOrder } from "../../services/order";
 import { getStorageData } from "../../helpers/stored";
+import { HelmetProvider } from "react-helmet-async";
 
 const provinces = [
   {
@@ -185,6 +186,9 @@ const Checkout = () => {
 
   return (
     <>
+      <HelmetProvider>
+        <title>Checkout</title>
+      </HelmetProvider>
       <section className="section">
         <div className="checkout-container">
           <div className="checkout-title">
