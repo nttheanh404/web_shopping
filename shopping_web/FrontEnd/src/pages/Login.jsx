@@ -20,9 +20,19 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const res = await login(form);
-      // Lưu token hoặc thông tin user vào localStorage nếu muốn
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("user", JSON.stringify(res.user));
+
+      const pending = JSON.parse(sessionStorage.getItem("pendingAddToCart"));
+
+      if (pending) {
+        const { itemId } = pending;
+        console.log("Thêm lại sản phẩm sau khi login:", itemId);
+        sessionStorage.removeItem("pendingAddToCart");
+        navigate(`/product/${itemId}`); // Điều hướng tới trang sản phẩm
+        window.location.reload();
+        return;
+      }
       navigate("/"); // Chuyển về trang chủ hoặc dashboard
       window.location.reload();
     } catch (error) {

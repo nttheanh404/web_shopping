@@ -47,11 +47,9 @@ const ShopContextProvider = (props) => {
   useEffect(() => {
     const syncCartWithUser = () => {
       const user = JSON.parse(localStorage.getItem("user"));
-      if (user && user._id) {
-        const storedCart = localStorage.getItem(`cartItems_${user._id}`);
-        const storedSelected = localStorage.getItem(
-          `selectedItems_${user._id}`
-        );
+      if (user && user.id) {
+        const storedCart = localStorage.getItem(`cartItems_${user.id}`);
+        const storedSelected = localStorage.getItem(`selectedItems_${user.id}`);
         setCartItems(storedCart ? JSON.parse(storedCart) : {});
         setSelectedItems(storedSelected ? JSON.parse(storedSelected) : []);
       } else {
@@ -79,10 +77,10 @@ const ShopContextProvider = (props) => {
         setAllProduct(products);
 
         const user = JSON.parse(localStorage.getItem("user"));
-        if (user && user._id) {
-          const storedCart = localStorage.getItem(`cartItems_${user._id}`);
+        if (user && user.id) {
+          const storedCart = localStorage.getItem(`cartItems_${user.id}`);
           const storedSelected = localStorage.getItem(
-            `selectedItems_${user._id}`
+            `selectedItems_${user.id}`
           );
           setCartItems(storedCart ? JSON.parse(storedCart) : {});
           setSelectedItems(storedSelected ? JSON.parse(storedSelected) : []);
@@ -103,11 +101,8 @@ const ShopContextProvider = (props) => {
   useEffect(() => {
     if (isInitialized.current) {
       const user = JSON.parse(localStorage.getItem("user"));
-      if (user && user._id) {
-        localStorage.setItem(
-          `cartItems_${user._id}`,
-          JSON.stringify(cartItems)
-        );
+      if (user && user.id) {
+        localStorage.setItem(`cartItems_${user.id}`, JSON.stringify(cartItems));
       }
     }
   }, [cartItems]);
@@ -115,9 +110,9 @@ const ShopContextProvider = (props) => {
   useEffect(() => {
     if (isInitialized.current) {
       const user = JSON.parse(localStorage.getItem("user"));
-      if (user && user._id) {
+      if (user && user.id) {
         localStorage.setItem(
-          `selectedItems_${user._id}`,
+          `selectedItems_${user.id}`,
           JSON.stringify(selectedItems)
         );
       }
@@ -177,11 +172,11 @@ const ShopContextProvider = (props) => {
       const quantity = cartItems[key];
       const itemInfo = allProduct.find((p) => p._id === productId);
       if (itemInfo) {
-        const price = parseInt(itemInfo.new_price.replace(/\./g, ""), 10);
+        const price = parseFloat(itemInfo.new_price); // ép kiểu từ string -> number
         totalAmount += price * quantity;
       }
     }
-    return totalAmount;
+    return totalAmount.toFixed(1); // làm tròn 1 số sau dấu chấm
   };
 
   const getSelectedTotalAmount = () => {
@@ -191,7 +186,9 @@ const ShopContextProvider = (props) => {
       const quantity = cartItems[key];
       const product = allProduct.find((p) => p._id === productId);
       if (product && quantity > 0) {
-        const price = parseInt(product.new_price.replace(/\./g, ""), 10);
+        console.log(product.new_price);
+        const price = parseFloat(product.new_price);
+        console.log(price);
         total += price * quantity;
       }
     }
@@ -231,9 +228,9 @@ const ShopContextProvider = (props) => {
 
   const loadCartFromStorage = () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user._id) {
-      const storedCart = localStorage.getItem(`cartItems_${user._id}`);
-      const storedSelected = localStorage.getItem(`selectedItems_${user._id}`);
+    if (user && user.id) {
+      const storedCart = localStorage.getItem(`cartItems_${user.id}`);
+      const storedSelected = localStorage.getItem(`selectedItems_${user.id}`);
       setCartItems(storedCart ? JSON.parse(storedCart) : {});
       setSelectedItems(storedSelected ? JSON.parse(storedSelected) : []);
     } else {
@@ -250,7 +247,7 @@ const ShopContextProvider = (props) => {
 
     setCartItems(updatedCart);
     setSelectedItems([]);
-    localStorage.setItem(`cart_${user?._id}`, JSON.stringify(updatedCart));
+    localStorage.setItem(`cart_${user?.id}`, JSON.stringify(updatedCart));
   };
 
   const contextValue = {

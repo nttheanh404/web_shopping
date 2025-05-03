@@ -1,6 +1,6 @@
 import { Ghost } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import "./NotFound.css";
+import "./notFound.css";
 
 const NotFound = () => {
   const navigate = useNavigate();

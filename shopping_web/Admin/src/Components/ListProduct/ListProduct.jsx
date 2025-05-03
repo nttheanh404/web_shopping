@@ -3,25 +3,24 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPencilAlt } from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
+import { getAllProducts, deleteProduct } from "../../services/product";
 
 const ListProduct = () => {
-  const authUrl = import.meta.env.VITE_BE_URL;
+  //const authUrl = import.meta.env.VITE_BE_URL;
   const [allProducts, setAllProducts] = useState([]);
   const navigate = useNavigate();
 
   const fetchInfo = async () => {
     try {
-      const res = await fetch(`${authUrl}/allproducts`);
-      const data = await res.json();
-      const activeProducts = data.filter((product) => !product.isDeleted);
-      setAllProducts(activeProducts);
+      const products = await getAllProducts();
+      setAllProducts(products);
     } catch (err) {
       console.error("Error loading product:", err);
     }
   };
 
   const editProduct = (product) => {
-    navigate(`/updateproduct/${product._id}`, {
+    navigate(`/admin/updateproduct/${product._id}`, {
       state: { productToUpdate: product },
     });
   };
@@ -32,16 +31,8 @@ const ListProduct = () => {
 
   const removeProduct = async (id) => {
     try {
-      console.log("ID sản phẩm cần xóa:", id);
-      const res = await fetch(`${authUrl}/removeproduct/${id}`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      });
-
-      setAllProducts(allProducts.filter((product) => product._id !== id));
+      await deleteProduct(id);
+      setAllProducts((prev) => prev.filter((product) => product._id !== id));
     } catch (err) {
       console.error("Error while deleting product:", err);
     }

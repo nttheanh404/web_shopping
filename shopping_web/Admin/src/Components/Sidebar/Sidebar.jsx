@@ -7,23 +7,30 @@ import list_product_icon from "../../assets/Product_list_icon.svg";
 const Sidebar = () => {
   return (
     <div className="sidebar">
-      <Link to={"/addproduct"} style={{ textDecoration: "none" }}>
+      <Link to={"/admin/addproduct"} style={{ textDecoration: "none" }}>
         <div className="sidebar-item" style={{ paddingLeft: "20px" }}>
           <img src={add_product_icon} alt="" />
           <p>Add Product</p>
         </div>
       </Link>
-      <Link to={"/listproduct"} style={{ textDecoration: "none" }}>
+      <Link to={"/admin/listproduct"} style={{ textDecoration: "none" }}>
         <div className="sidebar-item" style={{ paddingLeft: "20px" }}>
           <img src={list_product_icon} alt="" />
           <p>Product List</p>
         </div>
       </Link>
-      <Link to={"/ordermanagement"} style={{ textDecoration: "none" }}>
+      <Link to={"/admin/ordermanagement"} style={{ textDecoration: "none" }}>
         <div className="sidebar-item">
           {/* <img src={order_management_icon} alt="" /> */}
           <p className="sidebar-item-text">
             <span className="icon-management">🧾 </span> Order Management
+          </p>
+        </div>
+      </Link>
+      <Link to={"/admin/chatbox"} style={{ textDecoration: "none" }}>
+        <div className="sidebar-item">
+          <p className="sidebar-item-text">
+            <span className="icon-management">💬</span> Respond customers
           </p>
         </div>
       </Link>

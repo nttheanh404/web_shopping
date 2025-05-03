@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./checkout.css";
 import { ShopContext } from "../../context/ShopContext";
 // import { createPaymentRequest } from "../../services/payment";
@@ -6,6 +6,9 @@ import arrow_icon from "../assets/arrow.png";
 import { FaAddressCard } from "react-icons/fa";
 import { MdOutlinePayment } from "react-icons/md";
 import { GiConfirmed } from "react-icons/gi";
+import { createOrder } from "../../services/order";
+import { getStorageData } from "../../helpers/stored";
+import { HelmetProvider } from "react-helmet-async";
 
 const provinces = [
   {
@@ -25,8 +28,85 @@ const provinces = [
 ];
 
 const Checkout = () => {
-  const { getTotalCartAmount } = useContext(ShopContext);
+  const {
+    getSelectedTotalAmount,
+    selectedItems,
+    cartItems,
+    allProduct,
+    removeSelectedItemsFromCart,
+  } = useContext(ShopContext);
+
+  useEffect(() => {
+    const savedStep = localStorage.getItem("checkoutStep");
+    if (savedStep) {
+      setStep(parseInt(savedStep));
+    }
+  }, []);
+
   const [step, setStep] = useState(1);
+  // const formatCurrency = (value) => {
+  //   return value.toLocaleString("vi-VN") + "đ";
+  // };
+
+  // const parsePrice = (str) => parseInt(str.replace(/\./g, ""), 10);
+
+  const nextStep = async () => {
+    if (step === 1 && !validateForm()) return;
+
+    if (step === 2 && !paymentMethod) {
+      setPaymentMethodError(true);
+      return;
+    }
+
+    if (step < 3) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleSubmitOrder = async () => {
+    const orderData = {
+      user_id: getStorageData("user")?.id || "",
+      order_status: "pending",
+      payment_status: "pending",
+      order_items: Object.entries(cartItems)
+        .filter(([key]) => selectedItems.includes(key))
+        .map(([key, quantity]) => {
+          const [productId, size] = key.split("_");
+          return {
+            ...allProduct.find((p) => p._id === productId),
+            size,
+            quantity,
+          };
+        }),
+      shipping_address: formData,
+      payment_method: paymentMethod,
+      order_total: getSelectedTotalAmount(),
+    };
+
+    try {
+      const response = await createOrder(orderData);
+      console.log("Order response:", response);
+
+      if (paymentMethod === "VNPay_bank_transfer") {
+        window.location.href = response.data;
+      } else {
+        window.location.href = response;
+      }
+    } catch (error) {
+      console.error("Error creating order:", error);
+    } finally {
+      setTimeout(() => {
+        removeSelectedItemsFromCart();
+      }, 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  const icons = [FaAddressCard, MdOutlinePayment, GiConfirmed];
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -36,70 +116,79 @@ const Checkout = () => {
     address: "",
   });
   const [errors, setErrors] = useState({});
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [paymentError, setPaymentError] = useState("");
-
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = "Full name cannot be left blank";
-    if (!formData.phone) newErrors.phone = "Phone number cannot be left blank";
+    if (!formData.name) {
+      newErrors.name = "Full name cannot be left blank";
+    } else if (!/^[a-zA-ZÀ-Ỹà-ỹ\s]+$/.test(formData.name)) {
+      newErrors.name = "Full name can only contain letters and spaces";
+    }
+    if (!formData.phone) {
+      newErrors.phone = "Phone number cannot be blank";
+    } else if (!/^0\d{9}$/.test(formData.phone)) {
+      newErrors.phone = "Invalid phone number. Please re-enter.";
+    }
     if (!formData.city) {
       newErrors.city = "Please select Province/City";
     } else {
       if (!formData.district) {
         newErrors.district = "Please select District";
       } else {
-        if (!formData.ward) newErrors.ward = "Please select Ward";
+        if (!formData.ward) newErrors.ward = "Please select Ward/Commune";
       }
     }
-    if (!formData.address) newErrors.address = "Address cannot be left blank";
+    if (!formData.address)
+      newErrors.address = "Detailed address cannot be left blank";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const nextStep = async () => {
-    if (step === 1 && !validateForm()) return;
-    if (step === 2 && !paymentMethod) {
-      setPaymentError("Please select a payment method before proceeding.");
-      return;
-    }
-    if (step < 3) {
-      setStep(step + 1);
-      setPaymentError("");
-      return;
-    }
-    if (paymentMethod === "Cash on Delivery") {
-      alert(
-        "Thank you for your order! You will pay when the products are delivered."
-      );
-      return;
-    }
-
-    if (paymentMethod === "VNPay Banking") {
-      alert("You will be redirected to the VNPay payment gateway.");
-      return;
-    }
-    // const url = await createPaymentRequest();
-    // window.location.href = url?.data;
-  };
-
-  const prevStep = () => {
-    if (step > 1) setStep(step - 1);
-  };
+  const user = getStorageData("user");
+  const userId = user?.id || "guest"; // fallback nếu chưa đăng nhập
+  const addressKey = `checkoutAddress_${userId}`;
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const newFormData = { ...formData, [e.target.name]: e.target.value };
+    setFormData(newFormData);
+    localStorage.setItem(addressKey, JSON.stringify(newFormData));
   };
+
+  useEffect(() => {
+    const savedStep = localStorage.getItem("checkoutStep");
+    if (savedStep) {
+      setStep(parseInt(savedStep));
+    }
+
+    const savedAddress = localStorage.getItem(addressKey);
+    if (savedAddress) {
+      setFormData(JSON.parse(savedAddress));
+    }
+  }, []);
 
   const selectedProvince = provinces.find((p) => p.name === formData.city);
   const selectedDistrict = selectedProvince?.districts.find(
     (d) => d.name === formData.district
   );
 
-  const icons = [FaAddressCard, MdOutlinePayment, GiConfirmed];
+  const [paymentMethodError, setPaymentMethodError] = useState(false);
+
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const getPaymentMethodLabel = (method) => {
+    switch (method) {
+      case "VNPay_bank_transfer":
+        return "VNPay Banking";
+      case "cash_on_delivery":
+        return "Cash on Delivery";
+      default:
+        return "Không xác định";
+    }
+  };
 
   return (
     <>
+      <HelmetProvider>
+        <title>Checkout</title>
+      </HelmetProvider>
       <section className="section">
         <div className="checkout-container">
           <div className="checkout-title">
@@ -286,9 +375,12 @@ const Checkout = () => {
                   <input
                     type="radio"
                     name="payment"
-                    value="VNPay Banking"
-                    checked={paymentMethod === "VNPay Banking"}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    value="VNPay_bank_transfer"
+                    checked={paymentMethod === "VNPay_bank_transfer"}
+                    onChange={(e) => {
+                      setPaymentMethod(e.target.value);
+                      setPaymentMethodError(false);
+                    }}
                   />
                   <span>VNPay Banking</span>
                 </label>
@@ -297,71 +389,103 @@ const Checkout = () => {
                   <input
                     type="radio"
                     name="payment"
-                    value="Cash on Delivery"
-                    checked={paymentMethod === "Cash on Delivery"}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    value="cash_on_delivery"
+                    checked={paymentMethod === "cash_on_delivery"}
+                    onChange={(e) => {
+                      setPaymentMethod(e.target.value);
+                      setPaymentMethodError(false);
+                    }}
                   />
                   <span>Cash on Delivery</span>
                 </label>
               </div>
-              {paymentError && <p className="checkout-error">{paymentError}</p>}
+              {paymentMethodError && (
+                <p className="checkout-error">Please select payment method.</p>
+              )}
             </>
           )}
 
           {step === 3 && (
-            <div className="checkout-confirmed-container">
-              <h2 className="checkout-confirmed-title">Order information</h2>
+            <div className="checkout-confirm-container">
+              <div className="checkout-confirm-content">
+                {/* Sản phẩm được chọn */}
+                <div className="checkout-products">
+                  {Object.entries(cartItems)
+                    .filter(([key]) => selectedItems.includes(key))
+                    .map(([key, quantity]) => {
+                      if (quantity <= 0) return null;
 
-              <div style={{ marginBottom: "16px" }}>
-                <p className="checkout-confirmed-items">Shipping address:</p>
-                <p className="checkout-confirmed-detail">
-                  {formData.name} - {formData.phone} <br />
-                  {formData.address}, {formData.ward}, {formData.district},{" "}
-                  {formData.city}
-                </p>
-              </div>
+                      const [productId, size] = key.split("_");
+                      const product = allProduct.find(
+                        (p) => p._id === productId
+                      );
+                      if (!product) return null;
 
-              <div style={{ marginBottom: "16px" }}>
-                <p className="checkout-confirmed-items">Payment method:</p>
-                <p className="checkout-confirmed-detail">{paymentMethod}</p>
-              </div>
-
-              {paymentMethod === "VNPay Banking" && (
-                <div className="checkout-vnpay">
-                  <p className="checkout-confirmed-items">
-                    VNPay Instructions:
-                  </p>
-                  <p className="checkout-confirmed-detail">
-                    You will be redirected to the VNPay gateway to complete your
-                    payment.
-                  </p>
+                      return (
+                        <div key={key} className="checkout-product-card">
+                          <div className="checkout-product-info">
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              className="checkout-product-img"
+                            />
+                            <p className="checkout-product-name">
+                              {product.name}
+                            </p>
+                          </div>
+                          <div
+                            className="checkout-product-details"
+                            style={{ marginRight: "20px" }}
+                          >
+                            <p>Size: {size}</p>
+                            <p>Price: ${product.new_price}</p>
+                            <p>Quantity: {quantity}</p>
+                          </div>
+                          <div className="checkout-product-total">
+                            <p className="total-label">Total</p>
+                            <p className="total-price">
+                              ${product.new_price * quantity}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
                 </div>
-              )}
 
-              {paymentMethod === "Cash on Delivery" && (
-                <div className="checkout-cod">
-                  <p className="checkout-confirmed-items">
-                    Cash on Delivery Details:
-                  </p>
-                  <p className="checkout-confirmed-detail">
-                    Please prepare the exact amount for payment upon delivery.
-                  </p>
-                </div>
-              )}
+                {/* Xác nhận thanh toán */}
+                <div className="checkout-summary">
+                  <div>
+                    <p className="checkout-summary-title">Delivery address:</p>
+                    <p className="checkout-summary-text">
+                      {formData.name} - {formData.phone}
+                      <br />
+                      {formData.address}, {formData.ward}, {formData.district},{" "}
+                      {formData.city}
+                    </p>
+                  </div>
 
-              <div className="checkout-confirmed-fee">
-                <div className="checkout-confirmed-fee-items">
-                  <span>Products fee:</span>
-                  <span>${getTotalCartAmount()}</span>
-                </div>
-                <div className="checkout-confirmed-fee-items">
-                  <span>Shipping fee:</span>
-                  <span>Free</span>
-                </div>
-                <hr />
-                <div className="checkout-confirmed-fee-items">
-                  <span>Total:</span>
-                  <span>${getTotalCartAmount()}</span>
+                  <div>
+                    <p className="checkout-summary-title">Payment method:</p>
+                    <p className="checkout-summary-text">
+                      {getPaymentMethodLabel(paymentMethod)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="checkout-price-line">
+                      <span>Order fee:</span>
+                      <span>${getSelectedTotalAmount()}</span>
+                    </div>
+                    <div className="checkout-price-line">
+                      <span>Shipping fee:</span>
+                      <span>Free</span>
+                    </div>
+                    <hr className="checkout-divider" />
+                    <div className="checkout-price-total">
+                      <span>Total:</span>
+                      <span>${getSelectedTotalAmount()}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -383,7 +507,7 @@ const Checkout = () => {
                 />
               </button>
             ) : (
-              <button className="button-confirm" onClick={nextStep}>
+              <button className="button-confirm" onClick={handleSubmitOrder}>
                 {paymentMethod === "Cash on Delivery"
                   ? "Confirm and Pay on Delivery"
                   : "Confirm and Pay Online"}

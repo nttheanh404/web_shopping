@@ -18,6 +18,8 @@ import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import NotFound from "./components/NotFound/notFound.jsx";
 import SuccessOrder from "./components/SuccessOrder/successOrder.jsx";
+import VerifyEmail from "./components/VerifyEmail/verifyEmail.jsx";
+import Order from "./components/Order/order.jsx";
 function App() {
   return (
     <div>
@@ -43,8 +45,10 @@ function App() {
           </Route>
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order" element={<Order />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/change-password" element={<ChangePassword />} />
 
           <Route path="/forgot-password" element={<ForgotPassword />} />

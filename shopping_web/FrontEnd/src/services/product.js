@@ -7,6 +7,7 @@ const productAPI = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "true",
+    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
   },
 });
 
@@ -22,7 +23,6 @@ export const getAllProducts = async () => {
 
 export const getProductById = async (id) => {
   try {
-    
     const response = await productAPI.get(`/product/${id}`);
     return response.data;
   } catch (error) {

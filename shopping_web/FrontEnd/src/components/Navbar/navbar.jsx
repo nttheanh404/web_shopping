@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState, useEffect } from "react";
 import "./navbar.css";
 import logo from "../assets/logo.png";
 import cart_icon from "../assets/cart_icon.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ShopContext } from "../../context/ShopContext";
 import nav_dropdown from "../assets/nav_dropdown.png";
 import { logout } from "../../services/auth";
@@ -10,6 +10,7 @@ import { getStorageData, removeStorageData } from "../../helpers/stored";
 import { IoPersonCircleOutline } from "react-icons/io5";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const { getTotalCartItems, resetCart, loadCartFromStorage } =
     useContext(ShopContext);
   const menuRef = useRef();
@@ -40,6 +41,14 @@ const Navbar = () => {
       setIsOpen(false);
     } catch (error) {
       console.error("Logout failed", error);
+    }
+  };
+
+  const handleCartClick = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate("/cart");
     }
   };
 
@@ -144,7 +153,7 @@ const Navbar = () => {
                 <li className="dropdown-item">
                   <Link
                     style={{ textDecoration: "none", color: "currentColor" }}
-                    to="/auth/change-password"
+                    to="/change-password"
                   >
                     Change password
                   </Link>
@@ -161,12 +170,10 @@ const Navbar = () => {
             )}
           </div>
         )}
-        <Link
-          style={{ textDecoration: "none", color: "currentColor" }}
-          to="/cart"
-        >
+        <div onClick={handleCartClick} style={{ cursor: "pointer" }}>
           <img src={cart_icon} alt="cart icon" />
-        </Link>
+        </div>
+
         <div className="nav-cart-count">{getTotalCartItems()}</div>
       </div>
     </div>

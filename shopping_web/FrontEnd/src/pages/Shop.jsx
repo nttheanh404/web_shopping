@@ -4,15 +4,28 @@ import Popular from "../components/Popular/popular";
 import Offers from "../components/Offers/offers";
 import NewCollections from "../components/NewCollections/newCollections";
 import NewsLetter from "../components/NewsLetter/newsLetter";
+import { HelmetProvider } from "react-helmet-async";
+import ChatWidget from "../components/ChatWidget/chatWidget";
+import { getStorageData } from "../helpers/stored";
 const Shop = () => {
+  const userId = getStorageData("user")?.id || null;
+  console.log("userId", userId);
+
+
   return (
-    <div>
-      <Hero />
-      <Popular />
-      <Offers />
-      <NewCollections />
-      <NewsLetter />
-    </div>
+    <>
+      <HelmetProvider>
+        <title>JYStore</title>
+      </HelmetProvider>
+      <>
+        <Hero />
+        <Popular />
+        <Offers />
+        <NewCollections />
+        <NewsLetter />
+        <ChatWidget userId={userId} />
+      </>
+    </>
   );
 };
 
