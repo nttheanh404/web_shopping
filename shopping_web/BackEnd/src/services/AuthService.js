@@ -105,4 +105,23 @@ const changePassword = async ({ userId, oldPassword, newPassword }) => {
   return { message: "Password changed successfully" };
 };
 
-module.exports = { register, login, logout, changePassword, verifyEmail };
+const getAllAccounts = async () => {
+  const accounts = await Account.find().select(
+    "-password -refreshToken -emailToken"
+  ); // ẩn các thông tin nhạy cảm
+  return accounts;
+};
+
+const updateAccountById = async (id, updateData) => {
+  return await Account.findByIdAndUpdate(id, updateData, { new: true });
+};
+
+module.exports = {
+  register,
+  login,
+  logout,
+  changePassword,
+  verifyEmail,
+  getAllAccounts,
+  updateAccountById,
+};

@@ -56,10 +56,33 @@ const handleVerifyEmail = async (req, res) => {
   }
 };
 
+const getAllAccounts = async (req, res) => {
+  try {
+    const accounts = await authService.getAllAccounts();
+    res.status(200).json(accounts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const updateAccount = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updated = await authService.updateAccountById(id, req.body);
+    res.status(200).json(updated);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Cập nhật tài khoản thất bại", error: err });
+  }
+};
+
 module.exports = {
   handleRegister,
   handleLogin,
   handleLogout,
   handleChangePassword,
   handleVerifyEmail,
+  getAllAccounts,
+  updateAccount,
 };

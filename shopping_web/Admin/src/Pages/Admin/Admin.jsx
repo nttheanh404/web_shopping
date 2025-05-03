@@ -6,6 +6,7 @@ import AddProduct from "../../Components/AddProduct/AddProduct";
 import ListProduct from "../../Components/ListProduct/ListProduct";
 import OrderManagement from "../../Components/OrderManagement/OrderManagement";
 import ChatWidget from "../../Components/ChatWidget/ChatWidget";
+import AccountManagement from "../../Components/AccountManagement/AccountManagement";
 
 const Admin = () => {
   return (
@@ -18,6 +19,7 @@ const Admin = () => {
         {/* <Route path="/revenue" element={<Revenue />} /> */}
         <Route path="/ordermanagement" element={<OrderManagement />} />
         <Route path="/chatbox" element={<ChatWidget />} />
+        <Route path="/accountmanagement" element={<AccountManagement />} />
       </Routes>
     </div>
   );

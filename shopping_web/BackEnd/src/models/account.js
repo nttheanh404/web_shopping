@@ -10,6 +10,11 @@ const AccountSchema = new Schema(
     refreshToken: { type: String },
     emailToken: { type: String },
     isVerified: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ["active", "inactive", "banned"],
+      default: "active",
+    },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },

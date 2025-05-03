@@ -20,6 +20,15 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const res = await login(form);
+      const user = res.user;
+
+      // Kiểm tra trạng thái của tài khoản
+      if (user.status !== "active") {
+        setErrorMsg(
+          "Your account is inactive. Please contact the administrator."
+        );
+        return;
+      }
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("user", JSON.stringify(res.user));
 
