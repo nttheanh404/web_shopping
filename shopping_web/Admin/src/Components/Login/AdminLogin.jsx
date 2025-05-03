@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AdminLogin.css";
 import { loginAdmin } from "../../services/auth";
@@ -17,6 +16,13 @@ const AdminLogin = () => {
       const res = await loginAdmin(email, password);
 
       const { accessToken, user } = res.data;
+
+      // Kiểm tra nếu tài khoản admin có trạng thái "active"
+      if (user.status !== "active") {
+        return setErrorMsg(
+          "Your account is not active yet. Please contact support."
+        );
+      }
 
       if (user.role !== "admin") {
         return setErrorMsg("You do not have admin access");

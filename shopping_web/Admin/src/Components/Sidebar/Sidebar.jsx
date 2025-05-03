@@ -34,6 +34,13 @@ const Sidebar = () => {
           </p>
         </div>
       </Link>
+      <Link to={"/admin/accountmanagement"} style={{ textDecoration: "none" }}>
+        <div className="sidebar-item">
+          <p className="sidebar-item-text">
+            <span className="icon-management">🧑‍💼 </span> Account Management
+          </p>
+        </div>
+      </Link>
     </div>
   );
 };

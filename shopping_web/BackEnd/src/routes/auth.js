@@ -13,5 +13,7 @@ router.post(
   authController.handleChangePassword
 );
 router.get("/auth/verify-email", authController.handleVerifyEmail);
+router.get("/auth/accounts", authController.getAllAccounts);
+router.put("/update/:id", authController.updateAccount);
 
 module.exports = router;

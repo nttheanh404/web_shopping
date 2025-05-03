@@ -11,3 +11,11 @@ const api = axios.create({
 export const loginAdmin = (email, password) => {
   return api.post("/auth/login", { email, password });
 };
+
+export const getAllAccounts = () => {
+  return api.get("/auth/accounts");
+};
+
+export const updateAccount = (id, updateData) => {
+  return api.put(`/auth/update/${id}`, updateData);
+};
