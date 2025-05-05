@@ -13,6 +13,6 @@ router.get(
 router.get("/order/:id", verifyToken, orderController.getOrderById);
 router.put("/order/:id", verifyToken, orderController.updatePaymentStatus);
 router.put("/order/status/:id", verifyToken, orderController.updateOrderStatus);
-router.get("/order/revenue/get", orderController.getRevenue);
+// router.get("/order/revenue/get", orderController.getRevenue);
 
 module.exports = router;

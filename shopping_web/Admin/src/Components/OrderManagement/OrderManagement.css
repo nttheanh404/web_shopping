@@ -64,7 +64,6 @@
 
 .icon {
   margin-right: 6px;
-  /* color: #ac4fab; */
   font-size: 18px;
 }
 
@@ -87,7 +86,7 @@
   top: 0;
   background-color: #000000;
   z-index: 1;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Tạo bóng mờ cho phần sticky */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .order-table th {

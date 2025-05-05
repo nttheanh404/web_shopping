@@ -1,4 +1,4 @@
-const Account = require("../models/Account");
+const Account = require("../models/account");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { generateAccessToken, generateRefreshToken } = require("../utils/token");
@@ -32,19 +32,20 @@ const register = async ({ email, password, name }) => {
   await sendVerificationEmail(email, emailToken);
 
   return {
-    message: "Đăng ký thành công, vui lòng kiểm tra email để xác thực.",
+    message:
+      "Registration successful, please check your email for verification.",
   };
 };
 
 const verifyEmail = async (token) => {
   const user = await Account.findOne({ emailToken: token });
-  if (!user) throw new Error("Token không hợp lệ");
+  if (!user) throw new Error("Invalid token");
 
   user.emailToken = token;
   user.isVerified = true;
   await user.save();
 
-  return { message: "Xác thực email thành công!" };
+  return { message: "Email verification successful!" };
 };
 
 const login = async ({ email, password }) => {
@@ -54,7 +55,7 @@ const login = async ({ email, password }) => {
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) throw new Error("Invalid credentials");
   if (!user.isVerified) {
-    throw new Error("Tài khoản chưa được xác thực email");
+    throw new Error("Email account not verified");
   }
 
   const accessToken = generateAccessToken(user);
@@ -66,7 +67,12 @@ const login = async ({ email, password }) => {
   return {
     accessToken,
     //refreshToken,
-    user: { id: user._id, name: user.name, role: user.role },
+    user: {
+      id: user._id,
+      name: user.name,
+      role: user.role,
+      status: user.status,
+    },
   };
 };
 

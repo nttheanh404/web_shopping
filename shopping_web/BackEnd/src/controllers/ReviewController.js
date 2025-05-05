@@ -25,7 +25,7 @@ const createReview = async (req, res) => {
       },
     });
 
-    console.log("Received req.body:", req.body);
+    // console.log("Received req.body:", req.body);
 
     if (!hasOrdered) {
       return res.status(403).json({

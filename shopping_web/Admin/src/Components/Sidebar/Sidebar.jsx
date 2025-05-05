@@ -21,9 +21,15 @@ const Sidebar = () => {
       </Link>
       <Link to={"/admin/ordermanagement"} style={{ textDecoration: "none" }}>
         <div className="sidebar-item">
-          {/* <img src={order_management_icon} alt="" /> */}
           <p className="sidebar-item-text">
             <span className="icon-management">🧾 </span> Order Management
+          </p>
+        </div>
+      </Link>
+      <Link to={"/admin/revenue"} style={{ textDecoration: "none" }}>
+        <div className="sidebar-item">
+          <p className="sidebar-item-text">
+            <span className="icon-management">📊</span> Revenue Statistics
           </p>
         </div>
       </Link>

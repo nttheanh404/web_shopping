@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const authUrl = `http://localhost:8080`;
+const authUrl = import.meta.env.VITE_BE_URL || "http://localhost:8080";
 
 const reviewAPI = axios.create({
   baseURL: authUrl + "/",
@@ -19,7 +19,7 @@ export const createReview = async (reviewData) => {
     return response.data;
   } catch (error) {
     console.error("Lỗi khi gửi đánh giá:", error);
-    console.log("Chi tiết lỗi:", error.response?.data);
+    // console.log("Chi tiết lỗi:", error.response?.data);
     throw error;
   }
 };

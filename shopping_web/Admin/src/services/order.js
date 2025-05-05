@@ -1,7 +1,8 @@
 import axios from "axios";
 
+const authUrl = import.meta.env.VITE_BE_URL || "http://localhost:8080";
 const orderAPI = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: authUrl + "/",
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${localStorage.getItem("adminToken")}`,

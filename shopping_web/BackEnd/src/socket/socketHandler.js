@@ -1,4 +1,3 @@
-// socket/socketHandler.js
 const chatService = require("../services/ChatService");
 
 const setupSocket = (io) => {

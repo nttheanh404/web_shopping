@@ -85,7 +85,6 @@ const AccountManagement = () => {
             <option value="">All Status</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
-            <option value="banned">Banned</option>
           </select>
         </div>
       </div>
@@ -97,7 +96,7 @@ const AccountManagement = () => {
           <table className="account-table">
             <thead>
               <tr>
-                <th>ID</th> {/* Thêm cột ID */}
+                <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
@@ -108,7 +107,7 @@ const AccountManagement = () => {
             <tbody>
               {filteredAccounts.map((acc) => (
                 <tr key={acc._id}>
-                  <td>{acc._id}</td> {/* Hiển thị trường ID */}
+                  <td>{acc._id}</td>
                   <td>{acc.name || "No name"}</td>
                   <td>{acc.email}</td>
                   <td>
@@ -131,7 +130,6 @@ const AccountManagement = () => {
                     >
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
-                      <option value="banned">Banned</option>
                     </select>
                   </td>
                   <td>{new Date(acc.createdAt).toLocaleString()}</td>

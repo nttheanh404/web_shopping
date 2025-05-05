@@ -12,7 +12,7 @@ const AccountSchema = new Schema(
     isVerified: { type: Boolean, default: false },
     status: {
       type: String,
-      enum: ["active", "inactive", "banned"],
+      enum: ["active", "inactive"],
       default: "active",
     },
     createdAt: { type: Date, default: Date.now },
