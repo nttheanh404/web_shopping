@@ -10,7 +10,6 @@ import {
 } from "../../services/product";
 
 function AddProduct() {
-  const authUrl = import.meta.env.VITE_BE_URL;
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const location = useLocation();
@@ -62,7 +61,7 @@ function AddProduct() {
       );
       setProductDetails({
         ...productDetails,
-        [name]: selectedSizes, // Lưu vào mảng size
+        [name]: selectedSizes,
       });
     } else {
       setProductDetails({ ...productDetails, [name]: value });
@@ -74,8 +73,8 @@ function AddProduct() {
 
     setProductDetails((prevDetails) => {
       const updatedSize = checked
-        ? [...prevDetails.size, value] // Thêm kích thước nếu chọn
-        : prevDetails.size.filter((size) => size !== value); // Xóa kích thước nếu bỏ chọn
+        ? [...prevDetails.size, value]
+        : prevDetails.size.filter((size) => size !== value);
 
       return { ...prevDetails, size: updatedSize };
     });

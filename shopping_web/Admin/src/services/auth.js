@@ -1,10 +1,10 @@
 import axios from "axios";
-
-// Cấu hình axios
+const authUrl = import.meta.env.VITE_BE_URL || "http://localhost:8080";
 const api = axios.create({
-  baseURL: "http://localhost:8080", // Thay đổi nếu cần thiết
+  baseURL: authUrl + "/",
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
   },
 });
 

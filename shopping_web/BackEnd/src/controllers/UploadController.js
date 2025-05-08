@@ -1,4 +1,3 @@
-// controllers/upload.controller.js
 const { uploadCloud } = require("../services/UploadService");
 
 const uploadImage = [

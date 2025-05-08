@@ -16,9 +16,11 @@ const AdminLogin = () => {
       const res = await loginAdmin(email, password);
 
       const { accessToken, user } = res.data;
+      console.log(user);
 
       // Kiểm tra nếu tài khoản admin có trạng thái "active"
       if (user.status !== "active") {
+        console.log(user.status);
         return setErrorMsg(
           "Your account is not active yet. Please contact support."
         );

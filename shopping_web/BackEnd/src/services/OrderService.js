@@ -1,6 +1,8 @@
 const Order = require("../models/order");
 const Account = require("../models/account");
 const Product = require("../models/product");
+require("dotenv").config();
+
 const { createPaymentGateway } = require("../services/PaymentService");
 
 const createOrder = async (req) => {
@@ -9,7 +11,7 @@ const createOrder = async (req) => {
     const { payment_method } = orderData;
     const response = await Order.create(orderData);
     if (payment_method === "cash_on_delivery") {
-      return "http://localhost:5173/success-order";
+      return `${FRONTEND_URL}/success-order`;
     }
     return createPaymentGateway(req, orderData.order_total, response._id);
   } catch (err) {

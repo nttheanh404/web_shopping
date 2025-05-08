@@ -9,25 +9,32 @@ import { GiConfirmed } from "react-icons/gi";
 import { createOrder } from "../../services/order";
 import { getStorageData } from "../../helpers/stored";
 import { HelmetProvider } from "react-helmet-async";
+import address from "../assets/address.json";
 
-const provinces = [
-  {
-    name: "Hà Nội",
-    districts: [
-      { name: "Ba Đình", wards: ["Phúc Xá", "Trúc Bạch", "Vĩnh Phúc"] },
-      { name: "Hoàn Kiếm", wards: ["Chương Dương", "Cửa Đông", "Hàng Bạc"] },
-    ],
-  },
-  {
-    name: "TP Hồ Chí Minh",
-    districts: [
-      { name: "Quận 1", wards: ["Bến Nghé", "Bến Thành", "Cầu Ông Lãnh"] },
-      { name: "Quận 3", wards: ["Phường 1", "Phường 2", "Phường 3"] },
-    ],
-  },
-];
+// const provinces = [
+//   {
+//     name: "Hà Nội",
+//     districts: [
+//       { name: "Ba Đình", wards: ["Phúc Xá", "Trúc Bạch", "Vĩnh Phúc"] },
+//       { name: "Hoàn Kiếm", wards: ["Chương Dương", "Cửa Đông", "Hàng Bạc"] },
+//     ],
+//   },
+//   {
+//     name: "TP Hồ Chí Minh",
+//     districts: [
+//       { name: "Quận 1", wards: ["Bến Nghé", "Bến Thành", "Cầu Ông Lãnh"] },
+//       { name: "Quận 3", wards: ["Phường 1", "Phường 2", "Phường 3"] },
+//     ],
+//   },
+// ];
 
 const Checkout = () => {
+  const [provinces, setProvinces] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  useEffect(() => {
+    setProvinces(address);
+  }, []);
   const {
     getSelectedTotalAmount,
     selectedItems,
@@ -165,10 +172,34 @@ const Checkout = () => {
     }
   }, []);
 
-  const selectedProvince = provinces.find((p) => p.name === formData.city);
-  const selectedDistrict = selectedProvince?.districts.find(
-    (d) => d.name === formData.district
-  );
+  // const selectedProvince = provinces.find((p) => p.FullName === formData.city);
+  // const selectedDistrict = selectedProvince?.District.find(
+  //   (d) => d.FullName === formData.district
+  // );
+
+  const handleProvinceChange = (e) => {
+    const selectedCity = e.target.value;
+    setFormData({ ...formData, city: selectedCity, district: "", ward: "" });
+
+    const province = provinces.find(
+      (province) => province.FullName === selectedCity
+    );
+    setSelectedProvince(province);
+    console.log("Selected City:", selectedCity);
+    console.log("Matched Province:", province);
+  };
+  const handleDistrictChange = (e) => {
+    const selectedDistrict = e.target.value;
+    setFormData({ ...formData, district: selectedDistrict, ward: "" });
+    setSelectedDistrict(
+      selectedProvince.District.find(
+        (district) => district.FullName === selectedDistrict
+      )
+    );
+  };
+  const handleWardChange = (e) => {
+    setFormData({ ...formData, ward: e.target.value });
+  };
 
   const [paymentMethodError, setPaymentMethodError] = useState(false);
 
@@ -275,12 +306,15 @@ const Checkout = () => {
                         name="city"
                         className="checkout-input"
                         value={formData.city}
-                        onChange={handleChange}
+                        onChange={handleProvinceChange}
                       >
                         <option value="">Select Province/City</option>
-                        {provinces.map((province, index) => (
-                          <option key={index} value={province.name}>
-                            {province.name}
+                        {provinces?.map((province, index) => (
+                          <option
+                            key={province?.Code || index}
+                            value={province?.FullName}
+                          >
+                            {province?.FullName}
                           </option>
                         ))}
                       </select>
@@ -296,14 +330,18 @@ const Checkout = () => {
                         name="district"
                         className="checkout-input"
                         value={formData.district}
-                        onChange={handleChange}
+                        onChange={handleDistrictChange}
                       >
                         <option value="">Select District</option>
-                        {selectedProvince?.districts.map((district, index) => (
-                          <option key={index} value={district.name}>
-                            {district.name}
-                          </option>
-                        ))}
+                        {selectedProvince &&
+                          selectedProvince?.District?.map((district, index) => (
+                            <option
+                              key={district?.Code || index}
+                              value={district?.FullName}
+                            >
+                              {district?.FullName}
+                            </option>
+                          ))}
                       </select>
                       {errors.district && (
                         <p className="checkout-error">{errors.district}</p>
@@ -317,14 +355,18 @@ const Checkout = () => {
                         name="ward"
                         className="checkout-input"
                         value={formData.ward}
-                        onChange={handleChange}
+                        onChange={handleWardChange}
                       >
                         <option value="">Select Ward</option>
-                        {selectedDistrict?.wards.map((ward, index) => (
-                          <option key={index} value={ward}>
-                            {ward}
-                          </option>
-                        ))}
+                        {selectedDistrict &&
+                          selectedDistrict?.Ward?.map((ward, index) => (
+                            <option
+                              key={ward?.Code || index}
+                              value={ward?.FullName}
+                            >
+                              {ward?.FullName}
+                            </option>
+                          ))}
                       </select>
                       {errors.ward && (
                         <p className="checkout-error">{errors.ward}</p>

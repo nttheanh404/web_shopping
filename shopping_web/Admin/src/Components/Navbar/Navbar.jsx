@@ -1,9 +1,11 @@
 import React from "react";
 import "./Navbar.css";
 import navlogo from "../../assets/logo.png";
-import navProfile from "../../assets/nav-profile.svg";
+// import navProfile from "../../assets/nav-profile.svg";
 
 function Navbar() {
+  // const isAdminLoggedIn = localStorage.getItem("adminToken");
+
   return (
     <div className="navbar">
       <div className="navbar-left">
@@ -13,7 +15,9 @@ function Navbar() {
           <p>Admin Panel</p>
         </div>
       </div>
-      <img src={navProfile} alt="nav profile" className="navbar-profile" />
+      {/* {isAdminLoggedIn && (
+        <img src={navProfile} alt="nav profile" className="navbar-profile" />
+      )} */}
     </div>
   );
 }

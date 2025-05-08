@@ -1,14 +1,14 @@
 import axios from "axios";
 
+const authUrl = import.meta.env.VITE_BE_URL || "http://localhost:8080";
 const productAPI = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: authUrl + "/",
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
   },
 });
 
-// Lấy tất cả sản phẩm chưa bị xóa
 export const getAllProducts = async () => {
   try {
     const res = await productAPI.get("/allproducts");
@@ -23,7 +23,6 @@ export const getAllProducts = async () => {
   }
 };
 
-// Xóa sản phẩm theo id
 export const deleteProduct = async (id) => {
   try {
     const res = await productAPI.delete(`/removeproduct/${id}`);

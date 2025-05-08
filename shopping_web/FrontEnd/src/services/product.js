@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const authUrl = import.meta.env.VITE_BE_URL || "http://localhost:8080";
 
 const productAPI = axios.create({

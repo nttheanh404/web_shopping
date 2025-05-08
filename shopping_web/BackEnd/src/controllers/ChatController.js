@@ -1,4 +1,3 @@
-// controllers/chatController.js
 const chatService = require("../services/ChatService");
 
 const getChatHistory = async (req, res) => {

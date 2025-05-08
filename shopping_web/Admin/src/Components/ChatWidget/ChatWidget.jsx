@@ -7,7 +7,8 @@ import {
 import "./ChatWidget.css";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:8080");
+const authUrl = import.meta.env.VITE_BE_URL || "http://localhost:8080";
+const socket = io(authUrl);
 
 const ChatWidget = () => {
   const [chatUsers, setChatUsers] = useState([]);
@@ -110,25 +111,24 @@ const ChatWidget = () => {
   const handleSelectUser = (user) => {
     console.log("Selected user:", user);
     setSelectedUser(user);
-    // Khi chọn người dùng, đánh dấu là đã xem tin nhắn
     setUnreadMessages((prev) => ({
       ...prev,
       [user]: false,
     }));
   };
 
-  const handleNewMessage = (message) => {
-    if (selectedUser !== message.senderId) {
-      // Nếu người dùng chưa được chọn, đánh dấu tin nhắn là chưa xem
-      setUnreadMessages((prev) => ({
-        ...prev,
-        [message.senderId]: true,
-      }));
-    }
+  // const handleNewMessage = (message) => {
+  //   if (selectedUser !== message.senderId) {
+  //     // Nếu người dùng chưa được chọn, đánh dấu tin nhắn là chưa xem
+  //     setUnreadMessages((prev) => ({
+  //       ...prev,
+  //       [message.senderId]: true,
+  //     }));
+  //   }
 
-    // Cập nhật lịch sử chat
-    setChatHistory((prevHistory) => [...prevHistory, message]);
-  };
+  //   // Cập nhật lịch sử chat
+  //   setChatHistory((prevHistory) => [...prevHistory, message]);
+  // };
 
   return (
     <div className="chat-widget-container">

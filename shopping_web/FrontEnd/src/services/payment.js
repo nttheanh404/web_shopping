@@ -7,14 +7,15 @@ const paymentAPI = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "true",
+    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
   },
 });
 
 export const createPaymentRequest = async (data) => {
   try {
     const response = await paymentAPI.post("/create_payment_url", data);
-    return response?.data
+    return response?.data;
   } catch (error) {
     return error?.response.data;
   }
-}
+};
