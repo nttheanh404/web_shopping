@@ -2,8 +2,9 @@
   box-sizing: border-box;
   width: 100%;
   max-width: 800px;
-  padding: 30px 50px;
-  margin: 20px 30px 0;
+  padding: 20px 50px;
+  padding-bottom: 2px;
+  margin: 10px 30px 0;
   border-radius: 6px;
   background: white;
 }
@@ -11,7 +12,7 @@
 .add-product-item-field {
   width: 100%;
   color: #7b7b7b;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .add-product-item-field input {
@@ -51,11 +52,11 @@
   width: 120px;
   border-radius: 10px;
   object-fit: contain;
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 .add-product-btn {
-  margin-top: 20px;
+  margin-top: 10px;
   width: 160px;
   height: 50px;
   border-radius: 6px;
@@ -63,7 +64,7 @@
   border: none;
   cursor: pointer;
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -77,7 +78,7 @@
 }
 
 .size-options label {
-  font-size: 16px;
+  font-size: 14px;
   color: #7b7b7b;
   cursor: pointer;
   display: flex;
@@ -115,7 +116,7 @@
   width: 70%;
 }
 @media (max-width: 1400px) {
-  .add-product-image-preview img{
+  .add-product-image-preview img {
     display: none;
   }
 }

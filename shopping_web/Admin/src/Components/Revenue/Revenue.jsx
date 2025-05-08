@@ -172,7 +172,7 @@ const Revenue = () => {
       <div className="chart-wrapper">
         <div className="chart-box">
           <h3>Column chart</h3>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={230}>
             <BarChart data={revenueData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" interval={0} tick={{ fontSize: 11 }} />
@@ -186,7 +186,7 @@ const Revenue = () => {
 
         <div className="chart-box">
           <h3>Line chart</h3>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={230}>
             <LineChart data={revenueData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -211,7 +211,7 @@ const Revenue = () => {
       </div>
       <div className="chart-box-pie">
         <h3>Pie chart by category</h3>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={260}>
           <PieChart>
             <Pie
               dataKey="total"

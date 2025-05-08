@@ -14,7 +14,17 @@ const sendVerificationEmail = async (email, token) => {
     from: process.env.EMAIL_USER,
     to: email,
     subject: "Email Verification",
-    html: `<p>Click the link below to verify your email:</p><a href="${link}">${link}</a>`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <p>Hello,</p>
+        <p>Please click the link below to verify your email.:</p>
+        <p>
+          <a href="${link}" style="color: #1a73e8;">${link}</a>
+        </p>
+        <p>If you do not require authentication, please ignore this email.</p>
+        <p>Regards,<br>Support team</p>
+      </div>
+    `,
   };
 
   return transporter.sendMail(mailOptions);
