@@ -28,6 +28,7 @@ const CartItems = () => {
                   {cartItems[e.id]}
                 </button>
                 <p>{e.new_price * cartItems[e.id]}</p>
+                {/*anh abcdfg */}
                 <img
                   className="cart-items-remove-icon"
                   src={remove_icon}
